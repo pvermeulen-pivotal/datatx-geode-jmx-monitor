@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excludedMessages>
+	<excludedMessage>
+		<criteria>DISTRIBUTED_NO_ACK but enable-network-partition-detection
+		</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>DLockRequestProcessor</criteria>
+		<criteria>have elapsed while waiting for replies</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>org.apache.geode.internal.cache.InitialImageOperation
+		</criteria>
+		<criteria>have elapsed while waiting for replies</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>Bridge server: failed accepting client connection</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>An unexpected IOException occurred so the proxy will be
+			closed
+		</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>Unexpected IOException</criteria>
+		<criteria>Server connection</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>ignoring delete operation with null value</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>Redundancy has dropped below 1 configured copies to 0 actual
+			copies
+		</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>Configured Redundancy Level Could Not be Satisfied
+		</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>Proxy closing due to unexpected reset on socket connection
+		</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>Proxy closing due to unexpected broken pipe on socket
+			connection
+		</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>because incoming request was rejected by pool possibly due
+			to thread exhaustion
+		</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>below critical heap threshold</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>Exception on server while executing function : ClearRegion
+		</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>CacheClientProxy</criteria>
+		<criteria>Could not stop excludedMessage dispatcher thread</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>DistributedCacheOperation$CacheOperationReplyProcessor
+		</criteria>
+		<criteria>whose current membership list is</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>Exception on server while executing function : QueryFunction
+		</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>seconds have elapsed waiting for a response</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>The function is not registered for function id</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>No cache writers to initialize</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>passing initializer properties to region</criteria>
+	</excludedMessage>
+	<excludedMessage>
+		<criteria>Expected one of these:</criteria>
+	</excludedMessage>
+</excludedMessages>
