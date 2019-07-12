@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxBeans sampleTime="5000">
+	<mxBean mxBeanName="DistributedSystemMXBean">
+		<fields>
+			<field beanProperty="" fieldName="UsedHeapSize"
+				fieldSize="ACTUAL" count="0" percentage=".75"
+				percentageField="TotalHeapSize" percentageFieldSize="ACTUAL" />
+			<field beanProperty="" fieldName="JVMPauses" fieldSize="ACTUAL"
+				count="2" percentage="0" percentageField=""
+				percentageFieldSize="ACTUAL" />
+		</fields>
+	</mxBean>
+
+	<mxBean mxBeanName="MemberMXBean">
+		<fields>
+			<field beanProperty="" fieldName="TotalMissCount"
+				fieldSize="ACTUAL" count="0" percentage=".10"
+				percentageField="TotalHitCount" percentageFieldSize="ACTUAL" />
+			<field beanProperty="" fieldName="CurrentHeapSize"
+				fieldSize="ACTUAL" count="0" percentage=".85"
+				percentageField="MaximumHeapSize" percentageFieldSize="ACTUAL" />
+			<field beanProperty="" fieldName="JVMPauses" fieldSize="ACTUAL"
+				count="2" percentage="0" percentageField=""
+				percentageFieldSize="ACTUAL" />
+			<field beanProperty="" fieldName="ReplyWaitsInProgress"
+				fieldSize="ACTUAL" count="8" percentage="0" percentageField=""
+				percentageFieldSize="ACTUAL" />
+			<field beanProperty="" fieldName="CpuUsage" fieldSize="ACTUAL"
+				count="0" percentage=".90" percentageField="100"
+				percentageFieldSize="ACTUAL" />
+			<field beanProperty="" fieldName="NumThreads"
+				fieldSize="ACTUAL" count="0" percentage=".90" percentageField="250"
+				percentageFieldSize="ACTUAL" />
+		</fields>
+	</mxBean>
+
+	<!-- <mxBean mxBeanName="CacheServerMXBean"> -->
+	<!-- <fields> -->
+	<!-- <field beanProperty="" fieldName="RegisteredCQCount" -->
+	<!-- fieldSize="ACTUAL" count="5" percentage="0" percentageField="" -->
+	<!-- percentageFieldSize="ACTUAL" /> -->
+	<!-- </fields> -->
+	<!-- </mxBean> -->
+
+	<!-- <mxBean mxBeanName="DiskStoreMXBean"> -->
+	<!-- <fields> -->
+	<!-- <field beanProperty="persistence-event-disk-store" -->
+	<!-- fieldName="TotalBytesOnDisk" fieldSize="ACTUAL" count="0" -->
+	<!-- percentage=".80" percentageField="MaxOpLogSize" -->
+	<!-- percentageFieldSize="MEGABYTES" /> -->
+	<!-- <field beanProperty="fnmpfj-disk-store" -->
+	<!-- fieldName="TotalBytesOnDisk" fieldSize="ACTUAL" count="" -->
+	<!-- percentage=".80" percentageField="MaxOpLogSize" -->
+	<!-- percentageFieldSize="MEGABYTES" /> -->
+	<!-- <field beanProperty="jms-gateway-disk-store" -->
+	<!-- fieldName="TotalBytesOnDisk" fieldSize="ACTUAL" count="" -->
+	<!-- percentage=".80" percentageField="MaxOpLogSize" -->
+	<!-- percentageFieldSize="MEGABYTES" /> -->
+	<!-- <field beanProperty="pdx-disk-store" -->
+	<!-- fieldName="TotalBytesOnDisk" fieldSize="ACTUAL" count="" -->
+	<!-- percentage=".80" percentageField="MaxOpLogSize" -->
+	<!-- percentageFieldSize="MEGABYTES" /> -->
+	<!-- <field beanProperty="wan-gateway-disk-store" -->
+	<!-- fieldName="TotalBytesOnDisk" fieldSize="ACTUAL" count="" -->
+	<!-- percentage=".80" percentageField="MaxOpLogSize" -->
+	<!-- percentageFieldSize="MEGABYTES" /> -->
+	<!-- </fields> -->
+	<!-- </mxBean> -->
+
+	<!-- <mxBean mxBeanName="RegionMXBean"> -->
+	<!-- <fields> -->
+	<!-- <field beanProperty="/test1" fieldName="EntryCount" -->
+	<!-- fieldSize="ACTUAL" count="1000" percentage="0" percentageField="" -->
+	<!-- percentageFieldSize="ACTUAL" /> -->
+	<!-- </fields> -->
+	<!-- </mxBean> -->
+
+	<!-- <mxBean mxBeanName="DistributedRegionMXBean"> -->
+	<!-- <fields> -->
+	<!-- <field beanProperty="/test1" fieldName="MissCount" -->
+	<!-- fieldSize="ACTUAL" count="0" percentage=".01" -->
+	<!-- percentageField="HitCount" percentageFieldSize="ACTUAL" /> -->
+	<!-- </fields> -->
+	<!-- </mxBean> -->
+
+	<!-- <mxBean mxBeanName="LockServiceMXBean"> -->
+	<!-- <fields> -->
+	<!-- <field beanProperty="gatewayEventIdIndexMetaData_lockService" -->
+	<!-- fieldName="MemberCount" fieldSize="ACTUAL" count="5" percentage="0" -->
+	<!-- percentageField="" percentageFieldSize="ACTUAL" /> -->
+	<!-- </fields> -->
+	<!-- </mxBean> -->
+
+	<!-- <mxBean mxBeanName="DistributedLockServiceMXBean"> -->
+	<!-- <fields> -->
+	<!-- <field beanProperty="gatewayEventIdIndexMetaData_lockService" -->
+	<!-- fieldName="MemberCount" fieldSize="ACTUAL" count="5" percentage="0" -->
+	<!-- percentageField="" percentageFieldSize="ACTUAL" /> -->
+	<!-- </fields> -->
+	<!-- </mxBean> -->
+
+	<mxBean mxBeanName="GatewaySenderMXBean">
+		<fields>
+			<field beanProperty="gateway-sender" fieldName="EventQueueSize"
+				fieldSize="ACTUAL" count="100" percentage="0" percentageField=""
+				percentageFieldSize="ACTUAL" />
+			<field beanProperty="gateway-sender"
+				fieldName="EntriesOverflowedToDisk" fieldSize="ACTUAL" count="200"
+				percentage="0" percentageField="" percentageFieldSize="ACTUAL" />
+		</fields>
+	</mxBean>
+
+	<mxBean mxBeanName="GatewayReceiverMXBean">
+		<fields>
+			<field beanProperty=""
+				fieldName="TotalFailedConnectionAttempts" fieldSize="ACTUAL"
+				count="3" percentage="0" percentageField=""
+				percentageFieldSize="ACTUAL" />
+		</fields>
+	</mxBean>
+
+	<!-- <mxBean mxBeanName="AsyncEventQueueMXBean"> -->
+	<!-- <fields> -->
+	<!-- <field beanProperty="event-gateway" fieldName="EventQueueSize" -->
+	<!-- fieldSize="ACTUAL" count="1" percentage="0" percentageField="" -->
+	<!-- percentageFieldSize="ACTUAL" /> -->
+	<!-- </fields> -->
+	<!-- </mxBean> -->
+
+</mxBeans>

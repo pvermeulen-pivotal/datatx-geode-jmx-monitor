@@ -2,8 +2,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>util.geode.monitor.jmx</groupId>
-	<artifactId>geode-monitor-jmx</artifactId>
+	<groupId>util.datatx.geode</groupId>
+	<artifactId>datatx-geode-jmx-monitor</artifactId>
 	<version>1.0.0</version>
 
 	<build>
@@ -58,8 +58,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>util.geode.monitor</groupId>
-			<artifactId>geode-monitor</artifactId>
+			<groupId>util.datatx.geode</groupId>
+			<artifactId>datatx-geode-monitor</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
@@ -72,11 +72,6 @@
 			<artifactId>jaxb-api</artifactId>
 			<version>2.2.5</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>com.sun.mail</groupId> -->
-		<!-- <artifactId>javax.mail</artifactId> -->
-		<!-- <version>1.4.4</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
