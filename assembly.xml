@@ -16,8 +16,11 @@
 	</dependencySets>
 	<fileSets>
 		<fileSet>
-			<directory>monitor</directory>
+			<directory>.</directory>
 			<outputDirectory>monitor</outputDirectory>
+			<includes>
+				<include>**/*.sh</include>
+			</includes>
 			<directoryMode>0755</directoryMode>
 			<fileMode>0755</fileMode>
 		</fileSet>

@@ -38,11 +38,11 @@ public class StartMonitor extends MonitorImpl {
 				monitor.setExcludedMessages((ExcludedMessages) monitor.getUtil().processJAXB(
 						JAXBContext.newInstance(ExcludedMessageObjectFactory.class), Constants.EXCLUDED_MESSAGE_FILE));
 				outToClient.writeBytes(Constants.OK + "\n");
-			} else if (Constants.EXIT.equals(message)) {
+			} else if (Constants.SHUTDOWN.equals(message)) {
 				monitor.setShutdown(true);
 				monitor.disconnect();
-				opened = false;
 				outToClient.writeBytes(Constants.OK + "\n");
+				opened = false;
 			} else if (Constants.STATUS.equals(message)) {
 				if (monitor.isAttachedToManager()) {
 					outToClient.writeBytes(Constants.RUNNING_CONNECT + "\n");
@@ -50,7 +50,7 @@ public class StartMonitor extends MonitorImpl {
 					outToClient.writeBytes(Constants.RUNNING + "\n");
 				}
 			} else {
-				outToClient.writeBytes(Constants.NOT_OK + "\n");
+				outToClient.writeBytes(Constants.INVALID_CMD + "\n");
 			}
 			connectionSocket.close();
 			commandSocket.close();
