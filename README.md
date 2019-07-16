@@ -2,8 +2,32 @@
 
 The datatx-geode-jmx-monitor is an application which is used to monitor a Geode/GemFire cluster and generate alert messages based on JMX notifications sent from Geode/GemFire locator(s) to the monitor. JMX notifications are error messages written to Geode/GemFire logs with a severity of "warning" or higher. Additional notifications that are also sent from the Geode/GemFire locators include the departure, crash or joining of a member to the cluster.
 
-Another feature of the monitor application supports the definition Geode/GemFire metrics which can be monitored and have alerts generated in the event a metric threshold is exceeded. - This property 
+Another feature of the monitor application supports the definition Geode/GemFire metrics which can be monitored and have alerts generated in the event a metric threshold is exceeded.
 
+This project implements the abstract project datatx-geode-monitor which provides the majority of the monitoring with the exception of the abstract method sendAlert.
+
+public abstract void sendAlert(LogMessage logMessage);
+
+## LogMessage Format:
+
+    public class LogMessage {
+       private LogHeader header;
+       private Notification event;
+       private String body;
+       private int count = 1;
+    }
+    
+    public LogHeader(String severity, String date, String time, String zone,
+       String member, String event, String tid) {
+       this.severity = severity;
+       this.date = date;
+       this.zone = zone;
+       this.member = member;
+       this.event = event;
+       this.time = time.replace(".", ":");
+       this.tid = tid;
+    }
+    
 ## Monitor Configuration Files
 
 ### monitor.propertiers
