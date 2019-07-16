@@ -162,5 +162,14 @@ The Geode/GemFire JMX Monitor Command Client application is used to send command
 2. Status - Provides the status of the monitor and if the monitor is connected to Geode/GemFire locator(s).
 3. Shutdown - Shutdown the Geode/GemFire JMX monitor
 
-util.geode.monitor.client.MonitorCommand
+### Client Command Example
+java -cp datatx-geode-jmx-monitor-1.0.0.jar util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
+
+-h = hostname or IP address where the Geode?GemFire monitor is running
+-p = port number the Geode?GemFire JMX Monitor listens for incoming connections.
+-c = Command to run [Reload,Status,Shutdown]
+
+
+
+
 
