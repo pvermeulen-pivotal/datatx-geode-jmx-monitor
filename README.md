@@ -165,9 +165,9 @@ The Geode/GemFire JMX Monitor Command Client application is used to send command
 ### Client Command Example
 java -cp datatx-geode-jmx-monitor-1.0.0.jar util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
 
--h = hostname or IP address where the Geode?GemFire monitor is running
--p = port number the Geode?GemFire JMX Monitor listens for incoming connections.
--c = Command to run [Reload,Status,Shutdown]
+    -h = hostname or IP address where the Geode?GemFire monitor is running
+    -p = port number the Geode?GemFire JMX Monitor listens for incoming connections.
+    -c = Command to run [Reload,Status,Shutdown]
 
 
 
