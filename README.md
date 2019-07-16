@@ -152,3 +152,15 @@ docker run -d -it geode-monitor
 #!/bin/bash
 java -cp /usr/bin/monitor/conf:/usr/bin/monitor/lib/* util.geode.monitor.jmx.StartMonitor
 
+# Geode/GemFire JMX Monitor Command Client
+
+The Geode/GemFire JMX Monitor Command Client application is used to send commands to the Geode/GemFire JMX Monitor.
+
+## Client Commands
+
+1. Reload - This command will reload the excluded message file to pick up new message exclusions. The execludedMessages.xml file in the Geode/GemFire JMX monitor will need to be modified in the contqainer (if Docker container is used) 
+2. Status - Provides the status of the monitor and if the monitor is connected to Geode/GemFire locator(s).
+3. Shutdown - Shutdown the Geode/GemFire JMX monitor
+
+util.geode.monitor.client.MonitorCommand
+
