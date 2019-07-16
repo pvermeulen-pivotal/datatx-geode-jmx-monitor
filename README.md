@@ -140,4 +140,15 @@ The Geode/GemFire monitor can be run in a docker container.
 
     CMD  bash "/usr/bin/monitor/start_monitor.sh"
 
+### Docker Build
+
+docker build -t geode-monitor .
+
+### Docker Run
+docker run -d -it geode-monitor
+
+## Start Monitor Script (start_monitor.sh)
+
+#!/bin/bash
+java -cp /usr/bin/monitor/conf:/usr/bin/monitor/lib/* util.geode.monitor.jmx.StartMonitor
 
