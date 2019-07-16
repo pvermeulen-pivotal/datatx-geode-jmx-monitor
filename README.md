@@ -4,7 +4,7 @@ The datatx-geode-jmx-monitor is an application which is used to monitor a Geode/
 
 Another feature of the monitor application supports the definition Geode/GemFire metrics which can be monitored and have alerts generated in the event a metric threshold is exceeded.
 
-###Monitor Configuration Files
+### Monitor Configuration Files
 
 
 managers=localhost
