@@ -7,12 +7,12 @@ Another feature of the monitor application supports the definition Geode/GemFire
 ## Monitor Configuration Files
 
 ### monitor.propertiers
-managers - This property is a comma seperated list of locators that have a JMX manager defined=localhost
-port - This property defines the port number assiigned to the JMX manager
-command-port - This property defines the incoming TCP/IP port the monitor listens on for operator commands
-message-duration  - The time in minutes the monitor will wait before sending a duplicate message
-maximum-duplicates - The maximum number of duplicate messages
-reconnect-wait-time - The time in minutes the monitor will wait before trying to reconnect to a locator  
-reconnect-retry-attempts - The number of retry attempts before the monitor will try to use the next locator JMX maqnaqger defined in the managers property. 
-log-file-size - The maximum size of a monitor log file
-log-file-backups - The number of log backupsto maintain before rolling off the oldest log file
+1. managers - This property is a comma seperated list of locators that have a JMX manager defined=localhost
+2. port - This property defines the port number assiigned to the JMX manager
+3. command-port - This property defines the incoming TCP/IP port the monitor listens on for operator commands
+4,. message-duration  - The time in minutes the monitor will wait before sending a duplicate message
+5. maximum-duplicates - The maximum number of duplicate messages
+6. reconnect-wait-time - The time in minutes the monitor will wait before trying to reconnect to a locator  
+7. reconnect-retry-attempts - The number of retry attempts before the monitor will try to use the next locator JMX maqnaqger defined in the managers property. 
+8. log-file-size - The maximum size of a monitor log file
+9. log-file-backups - The number of log backupsto maintain before rolling off the oldest log file
