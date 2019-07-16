@@ -6,7 +6,7 @@ Another feature of the monitor application supports the definition Geode/GemFire
 
 This project implements the abstract project datatx-geode-monitor which provides the majority of the monitoring with the exception of the abstract method sendAlert.
 
-***public abstract void sendAlert(LogMessage logMessage);
+***public abstract void sendAlert(LogMessage logMessage);***
 
 ## LogMessage Format:
 
