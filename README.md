@@ -65,14 +65,16 @@ The excludedMessages XML file contain the messages or message snippets generated
 ### mxbeans.xml
 The mxbeans XML file contain the JMX mBeans objects and associated object properties used to monitor Geode/GemFire metrics
 
-	<mxBeans sampleTime="5000">
+    <mxBeans sampleTime="5000">
 	    <mxBean mxBeanName="DistributedSystemMXBean">
                 <fields>
-                     <field beanProperty="" fieldName="UsedHeapSize" fieldSize="ACTUAL" count="0" percentage=".75" 	                               percentageField="TotalHeapSize" percentageFieldSize="ACTUAL" />
-                     <field beanProperty="" fieldName="JVMPauses" fieldSize="ACTUAL" count="2" percentage="0" 		                               percentageField="" percentageFieldSize="ACTUAL" />
+                     <field beanProperty="" fieldName="UsedHeapSize" fieldSize="ACTUAL" count="0" percentage=".75"
+		        percentageField="TotalHeapSize" percentageFieldSize="ACTUAL" />
+                     <field beanProperty="" fieldName="JVMPauses" fieldSize="ACTUAL" count="2" percentage="0" 
+                        percentageField="" percentageFieldSize="ACTUAL" />
 		</fields>
             </mxBean>
-        </mxBeans>
+    </mxBeans>
 
 ### mxBean Properties
 
