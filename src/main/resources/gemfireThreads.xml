@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gemfireThreads>
-	<gemfireThread event="Event Processor for GatewaySender_" />
-	<gemfireThread event="WAN Locator Discovery Thread" />
+	<gemfireThread thread="Event Processor for GatewaySender_" />
+	<gemfireThread thread="WAN Locator Discovery Thread" />
 </gemfireThreads>
