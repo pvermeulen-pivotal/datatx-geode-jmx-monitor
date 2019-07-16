@@ -10,7 +10,7 @@ Another feature of the monitor application supports the definition Geode/GemFire
 1. managers - This property is a comma seperated list of locators that have a JMX manager defined=localhost
 2. port - This property defines the port number assiigned to the JMX manager
 3. command-port - This property defines the incoming TCP/IP port the monitor listens on for operator commands
-4,. message-duration  - The time in minutes the monitor will wait before sending a duplicate message
+4. message-duration  - The time in minutes the monitor will wait before sending a duplicate message
 5. maximum-duplicates - The maximum number of duplicate messages
 6. reconnect-wait-time - The time in minutes the monitor will wait before trying to reconnect to a locator  
 7. reconnect-retry-attempts - The number of retry attempts before the monitor will try to use the next locator JMX maqnaqger defined in the managers property. 
