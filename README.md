@@ -9,6 +9,7 @@ This project implements the abstract project datatx-geode-monitor which provides
 ***public abstract void sendAlert(LogMessage logMessage);***
 
 Example:	
+
     @Override
     public void sendAlert(LogMessage logMessage) {
         log.info("Sending Message: " + logMessage.toString());
