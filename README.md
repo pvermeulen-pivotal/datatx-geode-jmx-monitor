@@ -172,6 +172,11 @@ java -cp datatx-geode-jmx-monitor-1.0.0.jar util.geode.monitor.client.MonitorCom
     -p = port number the Geode?GemFire JMX Monitor listens for incoming connections.
     -c = command to run [Reload,Status,Shutdown]
 
+## Monitor Command Script (monitor_command.sh)
+
+#!/bin/bash
+java -cp /usr/bin/monitor/conf:/usr/bin/monitor/lib/* util.geode.monitor.client.MonitorCommand
+
 
 
 
