@@ -52,13 +52,13 @@ log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 log4j.appender.applicationLog=org.apache.log4j.RollingFileAppender
 ***log4j.appender.applicationLog.File=/usr/bin/monitor/logs/Alert_Health_Monitor.log***
-    Change this property to control where monitor log is written 
+    Change this property to control where monitor log is written
 log4j.appender.applicationLog.layout=org.apache.log4j.PatternLayout
 log4j.appender.applicationLog.MaxFileSize=2000KB
 log4j.appender.applicationLog.MaxBackupIndex=5
 log4j.appender.exceptionLog=org.apache.log4j.RollingFileAppender
 ***log4j.appender.exceptionLog.File=/usr/bin/monitor/logs/Alert_Health_Monitor_Exceptions***
-    Change this property to control where monitor exception log is written 
+    Change this property to control where monitor exception log is written
 log4j.appender.exceptionLog.layout=org.apache.log4j.PatternLayout
 log4j.appender.exceptionLog.MaxFileSize=2000KB
 log4j.appender.exceptionLog.MaxBackupIndex=5
