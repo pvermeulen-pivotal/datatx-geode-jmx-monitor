@@ -1,0 +1,2 @@
+alert-url=http://{server}:{port}/imseh/v1.0/event/"
+url-parms=Content-Type,application/json;Cache-Control,no-cache;

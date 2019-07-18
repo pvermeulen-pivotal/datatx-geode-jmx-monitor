@@ -10,6 +10,8 @@ public class MonitorCommand {
 	private static final String RELOAD = "RELOAD";
 	private static final String SHUTDOWN = "SHUTDOWN";
 	private static final String STATUS = "STATUS";
+	private static final String BLOCK = "BLOCK";
+	private static final String UNBLOCK = "UNBLOCK";
 	private static Socket clientSocket;
 	private static PrintWriter out;
 	private static BufferedReader in;
@@ -52,6 +54,8 @@ public class MonitorCommand {
 		System.out.println("     " + RELOAD + " Reloads excluded message file");
 		System.out.println("     " + SHUTDOWN + " Shuts down the monitor");
 		System.out.println("     " + STATUS + " Provides monitor status");
+		System.out.println("     " + BLOCK + "|[Member Name] Blocks a member from sending alerts");
+		System.out.println("     " + UNBLOCK + "|[Member Name] Unblocks a member from sending alerts");
 		System.out.println();
 	}
 
@@ -71,6 +75,10 @@ public class MonitorCommand {
 					}
 				}
 			}
+		}
+		if (!cmd.equalsIgnoreCase(RELOAD) && !cmd.equalsIgnoreCase(SHUTDOWN) && !cmd.equalsIgnoreCase(STATUS) 
+				&& !cmd.toUpperCase().startsWith(BLOCK) && !cmd.toUpperCase().startsWith(UNBLOCK)) {
+			cmd = null;
 		}
 	}
 
