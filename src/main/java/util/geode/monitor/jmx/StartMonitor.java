@@ -99,7 +99,9 @@ public class StartMonitor extends MonitorImpl {
 
 	private static boolean getSendAlertPropertyFile() {
 		boolean alertLoaded = false;
-		try (InputStream input = new FileInputStream("conf/alert.properties")) {
+		try {
+			InputStream input = StartMonitor.class.getClassLoader().getResourceAsStream("alert.properties");
+//			InputStream input = new FileInputStream("alert.properties"); 
 			alertProps = new Properties();
 			try {
 				alertProps.load(input);
