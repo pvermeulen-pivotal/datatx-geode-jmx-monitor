@@ -172,9 +172,11 @@ The Geode/GemFire JMX Monitor Command Client application is used to send command
 
 ## Client Commands
 
-1. Reload - This command will reload the excluded message file to pick up new message exclusions. The execludedMessages.xml file in the Geode/GemFire JMX monitor will need to be modified in the contqainer (if Docker container is used) 
-2. Status - Provides the status of the monitor and if the monitor is connected to Geode/GemFire locator(s).
-3. Shutdown - Shutdown the Geode/GemFire JMX monitor
+1. RELOAD - This command will reload the excluded message file to pick up new message exclusions. The execludedMessages.xml file in the Geode/GemFire JMX monitor will need to be modified in the contqainer (if Docker container is used) 
+2. STATUS - Provides the status of the monitor and if the monitor is connected to Geode/GemFire locator(s).
+3. SHUTDOWN - Shutdown the Geode/GemFire JMX monitor
+4. BLOCK - This command will block alerts for a cluster member. The format of this command is BLOCK|[Member Name]
+5. UNBLOCK - This command will unblock alerts for a cluster member. The format of this command is UNBLOCK|[Member Name]
 
 ### Client Command Example
 java -cp datatx-geode-jmx-monitor-1.0.0.jar util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
