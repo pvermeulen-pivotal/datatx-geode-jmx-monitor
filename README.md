@@ -4,6 +4,8 @@ The datatx-geode-jmx-monitor project provides an application which is used to mo
 
 The monitor application has a feature which supports the definition Geode/GemFire metrics that can be monitored to have alerts generated in the event a metric threshold is exceeded.
 
+The monitor provides support for multiple locators acting as JMX managers. The monitor connects to only one locator JMX manager at a time and if the locator is stopped or crashed it will connect to the next locator JMX manager in the configured list. Whenever a connection is lost to the locator, the monitor switches to another locator, sends an alert for the lost connection and continues monitoring the GemFire cluster.
+
 This project implements the abstract project datatx-geode-monitor which provides the majority of the monitoring functionality with the exception of the abstract method sendAlert. Users should modify the StartMonbitor class and override sendAlert method to manage the endpoint where alerts are sent. 
 
 ***public abstract void sendAlert(LogMessage logMessage);***
