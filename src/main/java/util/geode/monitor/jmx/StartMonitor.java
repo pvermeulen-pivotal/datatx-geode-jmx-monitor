@@ -2,7 +2,6 @@ package util.geode.monitor.jmx;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -101,7 +100,6 @@ public class StartMonitor extends MonitorImpl {
 		boolean alertLoaded = false;
 		try {
 			InputStream input = StartMonitor.class.getClassLoader().getResourceAsStream("alert.properties");
-//			InputStream input = new FileInputStream("alert.properties"); 
 			alertProps = new Properties();
 			try {
 				alertProps.load(input);
@@ -157,7 +155,7 @@ public class StartMonitor extends MonitorImpl {
 		try {
 			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			LOG.error("Unable to encode http parameters esception: " + e.getMessage());
+			LOG.error("Unable to encode http parameters exception: " + e.getMessage());
 		}
 
 		HttpResponse response = null;

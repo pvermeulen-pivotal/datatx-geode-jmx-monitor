@@ -13,15 +13,13 @@ RUN yum install -y zip
 RUN yum install -y unzip
 RUN yum install -y mtr
 
-ADD target/datatx-geode-jmx-monitor-1.0.0-archive.zip /usr/bin
+ADD datatx-geode-jmx-monitor-1.0.0.SNAPSHOT-package.zip /usr/bin
 
-RUN unzip /usr/bin/datatx-geode-jmx-monitor-1.0.0-archive.zip -d /usr/bin/
+RUN unzip /usr/bin/datatx-geode-jmx-monitor-1.0.0.SNAPSHOT-package.zip -d /usr/bin/
 RUN chmod +x /usr/bin/monitor/start_monitor.sh
 RUN chmod +x /usr/bin/monitor/monitor_command.sh
-RUN rm -f /usr/bin/datatx-geode-jmx-monitor-1.0.0-archive.zip
+RUN rm -f /usr/bin/datatx-geode-jmx-monitor-1.0.0.SNAPSHOT-package.zip
 
 EXPOSE 6780
 
 CMD  bash "/usr/bin/monitor/start_monitor.sh"
-
-
