@@ -7,9 +7,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -17,13 +15,11 @@ import javax.xml.bind.JAXBContext;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import util.geode.monitor.Constants;
@@ -145,41 +141,48 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 
 		String json = new JSONObject().put("fqdn", logMessage.getHeader().getMember()).put("severity", severity)
 				.put("message", logMessage.getBody()).toString();
+		monitor.getApplicationLog().info("Sending Alert Message json payload=" + json);
 
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("data", json));
-		Set<String> keys = httpParams.keySet();
-		for (String key : keys) {
-			params.add(new BasicNameValuePair(key, httpParams.get(key)));
-		}
-		params.add(new BasicNameValuePair("verify", "false"));
 		try {
-			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			monitor.getApplicationLog().error("Unable to encode http parameters exception: " + e.getMessage());
-		}
-
-		HttpResponse response = null;
-		try {
-			response = httpclient.execute(httppost);
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				try {
-					InputStream instream = entity.getContent();
-					byte[] responseData = null;
-					int bytesRead = instream.read(responseData);
-					if (bytesRead > 0) {
-						monitor.getApplicationLog().info("Alert URL Post Response: " + new String(responseData));
-					} else {
-						monitor.getApplicationLog().warn("No Alert URL Post Response received");
-					}
-					instream.close();
-				} catch (Exception e) {
-					monitor.getApplicationLog().error("Error reading http response exception: " + e.getMessage());
-				}
+			StringEntity sEntity = new StringEntity("data=" + json);
+			Set<String> keys = httpParams.keySet();
+			for (String key : keys) {
+				httppost.addHeader(key, httpParams.get(key));
 			}
-		} catch (Exception e) {
-			monitor.getApplicationLog().error("Error posting http request exception: " + e.getMessage());
+			httppost.addHeader("verify", "false");
+			try {
+				httppost.setEntity(sEntity);
+				HttpResponse response = null;
+				try {
+					response = httpclient.execute(httppost);
+					HttpEntity entity = response.getEntity();
+					if (entity != null) {
+						try {
+							InputStream instream = entity.getContent();
+							byte[] responseData = null;
+							int bytesRead = instream.read(responseData);
+							if (bytesRead > 0) {
+								monitor.getApplicationLog()
+										.info("Alert URL Post Response: " + new String(responseData));
+							} else {
+								monitor.getApplicationLog().warn("No Alert URL Post Response received");
+							}
+							instream.close();
+						} catch (Exception e) {
+							monitor.getApplicationLog()
+									.error("Error reading http response exception: " + e.getMessage());
+						}
+					} else {
+						monitor.getApplicationLog().warn("Http post response entity was null");
+					}
+				} catch (Exception e) {
+					monitor.getApplicationLog().error("Error executing HTTP post exception: " + e.getMessage());
+				}
+			} catch (Exception e) {
+				monitor.getApplicationLog().error("Error adding header/entity exception: " + e.getMessage());
+			}
+		} catch (UnsupportedEncodingException e) {
+			monitor.getApplicationLog().error("Error creating string entity exception=" + e.getMessage());
 		}
 	}
 }
