@@ -24,29 +24,26 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import util.geode.monitor.Constants;
+import util.geode.monitor.Monitor;
 import util.geode.monitor.impl.MonitorImpl;
 import util.geode.monitor.log.LogMessage;
 import util.geode.monitor.xml.ExcludedMessageObjectFactory;
 import util.geode.monitor.xml.ExcludedMessages;
 
-public class StartMonitor extends MonitorImpl {
-
-	private static Logger LOG = LogManager.getLogger(StartMonitor.class);
+public class StartMonitor extends MonitorImpl implements Monitor {
 	private static Properties alertProps;
 	private static HashMap<String, String> httpParams = new HashMap<String, String>();
 	private static String alertUrl;
+	private static StartMonitor monitor;
 
 	static public void main(String[] args) throws Exception {
-		StartMonitor monitor = new StartMonitor();
+		monitor = new StartMonitor();
 		boolean opened = true;
-
 		if (!getSendAlertPropertyFile()) {
-			LOG.error("Geode/GemFire Monitor failed to load alert property file");
+			monitor.getApplicationLog().error("Geode/GemFire Monitor failed to load alert property file");
 			return;
 		}
 
@@ -59,6 +56,7 @@ public class StartMonitor extends MonitorImpl {
 			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 			String message = inFromClient.readLine();
+			monitor.getApplicationLog().info("Received socket command=" + message);
 			if (Constants.RELOAD.equals(message)) {
 				monitor.setExcludedMessages((ExcludedMessages) monitor.getUtil().processJAXB(
 						JAXBContext.newInstance(ExcludedMessageObjectFactory.class), Constants.EXCLUDED_MESSAGE_FILE));
@@ -81,6 +79,7 @@ public class StartMonitor extends MonitorImpl {
 					monitor.removeBlocker(msgParts[1]);
 				} else {
 					outToClient.writeBytes(Constants.INVALID_CMD + "\n");
+					monitor.getApplicationLog().warn(Constants.INVALID_CMD);
 				}
 			} else if (Constants.STATUS.equals(message)) {
 				if (monitor.isAttachedToManager()) {
@@ -90,6 +89,7 @@ public class StartMonitor extends MonitorImpl {
 				}
 			} else {
 				outToClient.writeBytes(Constants.INVALID_CMD + "\n");
+				monitor.getApplicationLog().warn(Constants.INVALID_CMD);
 			}
 			connectionSocket.close();
 			commandSocket.close();
@@ -123,17 +123,18 @@ public class StartMonitor extends MonitorImpl {
 					}
 				}
 			} catch (Exception e) {
-				LOG.error("Error loading alert.properties Exception: " + e.getMessage());
+				monitor.getApplicationLog().error("Error loading alert.properties Exception: " + e.getMessage());
 			}
 		} catch (Exception e) {
-			LOG.error("Error loading alert.properties Exception: " + e.getMessage());
+			monitor.getApplicationLog().error("Error loading alert.properties Exception: " + e.getMessage());
 		}
 		return alertLoaded;
 	}
 
 	@Override
 	public void sendAlert(LogMessage logMessage) {
-		LOG.info("Sending Alert Message: url=" + alertUrl + " message=" + logMessage.toString());
+		monitor.getApplicationLog()
+				.info("Sending Alert Message: url=" + alertUrl + " message=" + logMessage.toString());
 		HttpClient httpclient = HttpClients.createDefault();
 		HttpPost httppost = new HttpPost(alertUrl);
 
@@ -155,7 +156,7 @@ public class StartMonitor extends MonitorImpl {
 		try {
 			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			LOG.error("Unable to encode http parameters exception: " + e.getMessage());
+			monitor.getApplicationLog().error("Unable to encode http parameters exception: " + e.getMessage());
 		}
 
 		HttpResponse response = null;
@@ -168,17 +169,17 @@ public class StartMonitor extends MonitorImpl {
 					byte[] responseData = null;
 					int bytesRead = instream.read(responseData);
 					if (bytesRead > 0) {
-						LOG.info("Alert URL Post Response: " + new String(responseData));
+						monitor.getApplicationLog().info("Alert URL Post Response: " + new String(responseData));
 					} else {
-						LOG.warn("No Alert URL Post Response received");
+						monitor.getApplicationLog().warn("No Alert URL Post Response received");
 					}
 					instream.close();
 				} catch (Exception e) {
-					LOG.error("Error reading http response exception: " + e.getMessage());
+					monitor.getApplicationLog().error("Error reading http response exception: " + e.getMessage());
 				}
 			}
 		} catch (Exception e) {
-			LOG.error("Error posting http request exception: " + e.getMessage());
+			monitor.getApplicationLog().error("Error posting http request exception: " + e.getMessage());
 		}
 	}
 }

@@ -99,25 +99,25 @@
 	<!-- </fields> -->
 	<!-- </mxBean> -->
 
-	<mxBean mxBeanName="GatewaySenderMXBean">
-		<fields>
-			<field beanProperty="gateway-sender" fieldName="EventQueueSize"
-				fieldSize="ACTUAL" count="100" percentage="0" percentageField=""
-				percentageFieldSize="ACTUAL" />
-			<field beanProperty="gateway-sender"
-				fieldName="EntriesOverflowedToDisk" fieldSize="ACTUAL" count="200"
-				percentage="0" percentageField="" percentageFieldSize="ACTUAL" />
-		</fields>
-	</mxBean>
+	<!-- <mxBean mxBeanName="GatewaySenderMXBean"> -->
+	<!-- <fields> -->
+	<!-- <field beanProperty="gateway-sender" fieldName="EventQueueSize" -->
+	<!-- fieldSize="ACTUAL" count="100" percentage="0" percentageField="" -->
+	<!-- percentageFieldSize="ACTUAL" /> -->
+	<!-- <field beanProperty="gateway-sender" -->
+	<!-- fieldName="EntriesOverflowedToDisk" fieldSize="ACTUAL" count="200" -->
+	<!-- percentage="0" percentageField="" percentageFieldSize="ACTUAL" /> -->
+	<!-- </fields> -->
+	<!-- </mxBean> -->
 
-	<mxBean mxBeanName="GatewayReceiverMXBean">
-		<fields>
-			<field beanProperty=""
-				fieldName="TotalFailedConnectionAttempts" fieldSize="ACTUAL"
-				count="3" percentage="0" percentageField=""
-				percentageFieldSize="ACTUAL" />
-		</fields>
-	</mxBean>
+	<!-- <mxBean mxBeanName="GatewayReceiverMXBean"> -->
+	<!-- <fields> -->
+	<!-- <field beanProperty="" -->
+	<!-- fieldName="TotalFailedConnectionAttempts" fieldSize="ACTUAL" -->
+	<!-- count="3" percentage="0" percentageField="" -->
+	<!-- percentageFieldSize="ACTUAL" /> -->
+	<!-- </fields> -->
+	<!-- </mxBean> -->
 
 	<!-- <mxBean mxBeanName="AsyncEventQueueMXBean"> -->
 	<!-- <fields> -->
