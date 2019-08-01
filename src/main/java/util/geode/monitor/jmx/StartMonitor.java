@@ -22,7 +22,6 @@ import javax.xml.bind.JAXBContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -113,11 +112,9 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 			}
 
 			public void checkClientTrusted(X509Certificate[] certs, String t) {
-				monitor.getApplicationLog().info("Trust Manager: client trusted certs=" + certs + " " + t);
 			}
 
 			public void checkServerTrusted(X509Certificate[] certs, String t) {
-				monitor.getApplicationLog().info("Trust Manager: server trusted certs=" + certs + " " + t);
 			}
 		} };
 		return certs;
@@ -222,8 +219,6 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 							monitor.getApplicationLog()
 									.error("Error reading http response exception: " + e.getMessage());
 						}
-					} else {
-						monitor.getApplicationLog().warn("Http post response entity was null");
 					}
 				} catch (Exception e) {
 					monitor.getApplicationLog().error("Error executing HTTP post exception: " + e.getMessage());

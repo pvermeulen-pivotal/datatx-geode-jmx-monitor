@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mxBeans sampleTime="5000">
+<mxBeans sampleTime="10000">
 	<mxBean mxBeanName="DistributedSystemMXBean">
 		<fields>
 			<field beanProperty="" fieldName="UsedHeapSize"
@@ -13,9 +13,6 @@
 
 	<mxBean mxBeanName="MemberMXBean">
 		<fields>
-			<field beanProperty="" fieldName="TotalMissCount"
-				fieldSize="ACTUAL" count="0" percentage=".10"
-				percentageField="TotalHitCount" percentageFieldSize="ACTUAL" />
 			<field beanProperty="" fieldName="CurrentHeapSize"
 				fieldSize="ACTUAL" count="0" percentage=".85"
 				percentageField="MaximumHeapSize" percentageFieldSize="ACTUAL" />

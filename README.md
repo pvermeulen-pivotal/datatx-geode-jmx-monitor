@@ -60,7 +60,7 @@ log4j.rootLogger=OFF
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 log4j.appender.applicationLog=org.apache.log4j.RollingFileAppender
-***log4j.appender.applicationLog.File=/usr/bin/monitor/logs/Alert_Health_Monitor.log***
+***log4j.appender.applicationLog.File=/usr/monitor/logs/Alert_Health_Monitor.log***
 
     Change this property to control where monitor log is written
 
@@ -68,7 +68,7 @@ log4j.appender.applicationLog.layout=org.apache.log4j.PatternLayout
 log4j.appender.applicationLog.MaxFileSize=2000KB
 log4j.appender.applicationLog.MaxBackupIndex=5
 log4j.appender.exceptionLog=org.apache.log4j.RollingFileAppender
-***log4j.appender.exceptionLog.File=/usr/bin/monitor/logs/Alert_Health_Monitor_Exceptions***
+***log4j.appender.exceptionLog.File=/usr/monitor/logs/Alert_Health_Monitor_Exceptions***
 
     Change this property to control where monitor exception log is written
 
@@ -146,15 +146,15 @@ The Geode/GemFire monitor can be run in a docker container.
     RUN yum install -y unzip
     RUN yum install -y mtr
 
-    ADD target/datatx-geode-jmx-monitor-1.0.0-archive.zip /usr/bin
-    RUN unzip /usr/bin/datatx-geode-jmx-monitor-1.0.0-archive.zip -d /usr/bin/
-    RUN chmod +x /usr/bin/monitor/start_monitor.sh
-    RUN chmod +x /usr/bin/monitor/monitor_command.sh
-    RUN rm -f /usr/bin/datatx-geode-jmx-monitor-1.0.0-archive.zip
+    ADD target/datatx-geode-jmx-monitor-1.0.0.SNAPSHOT-package.zip /usr
+    RUN unzip /usr/datatx-geode-jmx-monitor-1.0.0.SNAPSHOT-package.zip -d /usr
+    RUN chmod +x /usr/monitor/start_monitor.sh
+    RUN chmod +x /usr/monitor/monitor_command.sh
+    RUN rm -f /usr/datatx-geode-jmx-monitor-1.0.0.SNAPSHOT-package.zip
 
     EXPOSE 6780
 
-    CMD  bash "/usr/bin/monitor/start_monitor.sh"
+    CMD  bash "/usr/monitor/start_monitor.sh"
 
 ### Docker Build
 
@@ -166,7 +166,7 @@ docker run -d -it geode-monitor
 ## Start Monitor Script (start_monitor.sh)
 
 #!/bin/bash
-java -cp /usr/bin/monitor/conf:/usr/bin/monitor/lib/* util.geode.monitor.jmx.StartMonitor
+java -cp /usr/monitor/conf:/usr/monitor/lib/* util.geode.monitor.jmx.StartMonitor
 
 # Geode/GemFire JMX Monitor Command Client
 
@@ -181,7 +181,7 @@ The Geode/GemFire JMX Monitor Command Client application is used to send command
 5. UNBLOCK - This command will unblock alerts for a cluster member. The format of this command is UNBLOCK|[Member Name]
 
 ### Client Command Example
-java -cp datatx-geode-jmx-monitor-1.0.0.jar util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
+java -cp /usr/monitor/lib/* util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
 
     -h = hostname or IP address where the Geode?GemFire monitor is running
     -p = port number the Geode?GemFire JMX Monitor listens for incoming connections.
@@ -190,7 +190,7 @@ java -cp datatx-geode-jmx-monitor-1.0.0.jar util.geode.monitor.client.MonitorCom
 ## Monitor Command Script (monitor_command.sh)
 
 #!/bin/bash
-java -cp /usr/bin/monitor/conf:/usr/bin/monitor/lib/* util.geode.monitor.client.MonitorCommand
+java -cp /usr/monitor/conf:/usr/monitor/lib/* util.geode.monitor.client.MonitorCommand
 
 
 
