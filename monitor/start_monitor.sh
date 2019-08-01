@@ -1,2 +1,2 @@
 #!/bin/bash
-java -cp /usr/bin/monitor/conf:/usr/bin/monitor/lib/* util.geode.monitor.jmx.StartMonitor
+java -cp /usr/monitor/conf:/usr/monitor/lib/* util.geode.monitor.jmx.StartMonitor
