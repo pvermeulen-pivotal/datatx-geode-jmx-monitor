@@ -7,10 +7,20 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
 
 import org.apache.http.HttpEntity;
@@ -18,7 +28,11 @@ import org.apache.http.HttpResponse;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONObject;
 
@@ -92,6 +106,31 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 		}
 	}
 
+	private TrustManager[] get_trust_mgr() {
+		TrustManager[] certs = new TrustManager[] { new X509TrustManager() {
+			public X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+
+			public void checkClientTrusted(X509Certificate[] certs, String t) {
+				monitor.getApplicationLog().info("Trust Manager: client trusted certs=" + certs + " " + t);
+			}
+
+			public void checkServerTrusted(X509Certificate[] certs, String t) {
+				monitor.getApplicationLog().info("Trust Manager: server trusted certs=" + certs + " " + t);
+			}
+		} };
+		return certs;
+	}
+
+	private SSLConnectionSocketFactory setupSSL() throws Exception {
+		SSLContext ssl_ctx = SSLContext.getInstance("TLS");
+		TrustManager[] trust_mgr = get_trust_mgr();
+		ssl_ctx.init(null, trust_mgr, new SecureRandom()); 
+		HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
+		return new SSLConnectionSocketFactory(ssl_ctx, allowAllHosts);
+	}
+
 	private static boolean getSendAlertPropertyFile() {
 		boolean alertLoaded = false;
 		try {
@@ -131,7 +170,16 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	public void sendAlert(LogMessage logMessage) {
 		monitor.getApplicationLog()
 				.info("Sending Alert Message: url=" + alertUrl + " message=" + logMessage.toString());
-		HttpClient httpclient = HttpClients.createDefault();
+
+		HttpClient httpclient = null;
+		try {
+			httpclient = HttpClients.custom().setSSLSocketFactory(setupSSL()).build();
+		} catch (Exception e) {
+			monitor.getApplicationLog().error("Error creating custom HttpClients exception=" + e.getMessage());
+		}
+		if (httpclient == null) 
+			return;
+		
 		HttpPost httppost = new HttpPost(alertUrl);
 
 		String severity = logMessage.getHeader().getSeverity();

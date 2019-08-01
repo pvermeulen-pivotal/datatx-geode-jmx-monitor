@@ -15,8 +15,8 @@ public class MonitorCommand {
 	private static Socket clientSocket;
 	private static PrintWriter out;
 	private static BufferedReader in;
-	private static String host;
-	private static String cmd;
+	private static String host = null;
+	private static String cmd = null;
 	private static int port = 0;
 
 	public static void main(String[] args) throws Exception {
@@ -61,24 +61,27 @@ public class MonitorCommand {
 
 	private static void processArgs(String[] args) {
 		String lastArg = null;
-		for (String arg : args) {
-			if (arg.toUpperCase().equals("-H") || arg.toUpperCase().equals("-P") || arg.toUpperCase().equals("-C")) {
-				lastArg = arg.toUpperCase();
-			} else {
-				if (lastArg != null) {
-					if (lastArg.equals("-H")) {
-						host = arg;
-					} else if (lastArg.equals("-P")) {
-						port = Integer.parseInt(arg);
-					} else if (lastArg.equals("-C")) {
-						cmd = arg;
+		if (args != null) {
+			for (String arg : args) {
+				if (arg.toUpperCase().equals("-H") || arg.toUpperCase().equals("-P")
+						|| arg.toUpperCase().equals("-C")) {
+					lastArg = arg.toUpperCase();
+				} else {
+					if (lastArg != null) {
+						if (lastArg.equals("-H")) {
+							host = arg;
+						} else if (lastArg.equals("-P")) {
+							port = Integer.parseInt(arg);
+						} else if (lastArg.equals("-C")) {
+							cmd = arg;
+						}
 					}
 				}
 			}
-		}
-		if (!cmd.equalsIgnoreCase(RELOAD) && !cmd.equalsIgnoreCase(SHUTDOWN) && !cmd.equalsIgnoreCase(STATUS) 
-				&& !cmd.toUpperCase().startsWith(BLOCK) && !cmd.toUpperCase().startsWith(UNBLOCK)) {
-			cmd = null;
+			if (!cmd.equalsIgnoreCase(RELOAD) && !cmd.equalsIgnoreCase(SHUTDOWN) && !cmd.equalsIgnoreCase(STATUS)
+					&& !cmd.toUpperCase().startsWith(BLOCK) && !cmd.toUpperCase().startsWith(UNBLOCK)) {
+				cmd = null;
+			}
 		}
 	}
 
