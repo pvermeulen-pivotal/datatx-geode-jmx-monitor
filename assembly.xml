@@ -16,10 +16,20 @@
 	</dependencySets>
 	<fileSets>
 		<fileSet>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>monitor</outputDirectory>
+			<includes>
+				<include>*.md</include>
+			</includes>
+			<directoryMode>0755</directoryMode>
+			<fileMode>0755</fileMode>
+		</fileSet>
+		<fileSet>
 			<directory>monitor</directory>
 			<outputDirectory>monitor</outputDirectory>
 			<includes>
 				<include>**/*.sh</include>
+				<include>**/*.md</include>
 			</includes>
 			<directoryMode>0755</directoryMode>
 			<fileMode>0755</fileMode>
