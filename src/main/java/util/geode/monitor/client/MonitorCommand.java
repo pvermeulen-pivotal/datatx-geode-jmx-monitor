@@ -73,7 +73,7 @@ public class MonitorCommand {
 						} else if (lastArg.equals("-P")) {
 							port = Integer.parseInt(arg);
 						} else if (lastArg.equals("-C")) {
-							cmd = arg;
+							cmd = arg.toUpperCase();
 						}
 					}
 				}

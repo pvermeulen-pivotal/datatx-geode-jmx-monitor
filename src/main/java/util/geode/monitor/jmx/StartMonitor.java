@@ -7,9 +7,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
@@ -17,7 +14,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -30,7 +26,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -44,9 +39,14 @@ import util.geode.monitor.xml.ExcludedMessageObjectFactory;
 import util.geode.monitor.xml.ExcludedMessages;
 
 public class StartMonitor extends MonitorImpl implements Monitor {
+	private static final String ALERT_URL = "alert-url";
+	private static final String ALERT_URL_PARMS = "alert-url-parms";
+	private static final String ALERT_CLUSTER_FQDN = "alert-cluster-fqdn";
+
 	private static Properties alertProps;
 	private static HashMap<String, String> httpParams = new HashMap<String, String>();
 	private static String alertUrl;
+	private static String alertClusterFqdn;
 	private static StartMonitor monitor;
 
 	static public void main(String[] args) throws Exception {
@@ -126,7 +126,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	private SSLConnectionSocketFactory setupSSL() throws Exception {
 		SSLContext ssl_ctx = SSLContext.getInstance("TLS");
 		TrustManager[] trust_mgr = get_trust_mgr();
-		ssl_ctx.init(null, trust_mgr, new SecureRandom()); 
+		ssl_ctx.init(null, trust_mgr, new SecureRandom());
 		HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
 		return new SSLConnectionSocketFactory(ssl_ctx, allowAllHosts);
 	}
@@ -138,10 +138,10 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 			alertProps = new Properties();
 			try {
 				alertProps.load(input);
-				alertUrl = (String) alertProps.get("alert-url");
+				alertUrl = (String) alertProps.get(ALERT_URL);
 				if (alertUrl != null && alertUrl.length() > 0) {
 					alertLoaded = true;
-					String urlParams = (String) alertProps.get("url-parms");
+					String urlParams = (String) alertProps.get(ALERT_URL_PARMS);
 					if (urlParams != null && urlParams.length() > 0) {
 						if (!urlParams.endsWith(";")) {
 							urlParams = urlParams + ";";
@@ -156,6 +156,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 							}
 						}
 					}
+					alertClusterFqdn = alertProps.getProperty(ALERT_CLUSTER_FQDN);
 				}
 			} catch (Exception e) {
 				monitor.getApplicationLog().error("Error loading alert.properties Exception: " + e.getMessage());
@@ -171,15 +172,15 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 		monitor.getApplicationLog()
 				.info("Sending Alert Message: url=" + alertUrl + " message=" + logMessage.toString());
 
-		HttpClient httpclient = null;
+		CloseableHttpClient httpclient = null;
 		try {
 			httpclient = HttpClients.custom().setSSLSocketFactory(setupSSL()).build();
 		} catch (Exception e) {
 			monitor.getApplicationLog().error("Error creating custom HttpClients exception=" + e.getMessage());
 		}
-		if (httpclient == null) 
+		if (httpclient == null)
 			return;
-		
+
 		HttpPost httppost = new HttpPost(alertUrl);
 
 		String severity = logMessage.getHeader().getSeverity();
@@ -187,22 +188,23 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 			severity = "MINOR";
 		}
 
-		String json = new JSONObject().put("fqdn", logMessage.getHeader().getMember()).put("severity", severity)
-				.put("message", logMessage.getBody()).toString();
+		String json = new JSONObject().put("fqdn", alertClusterFqdn).put("severity", severity)
+				.put("message", logMessage.getHeader().toString() + " " + logMessage.getBody()).toString();
 		monitor.getApplicationLog().info("Sending Alert Message json payload=" + json);
 
 		try {
-			StringEntity sEntity = new StringEntity("data=" + json);
+			StringEntity sEntity = new StringEntity(json);
 			Set<String> keys = httpParams.keySet();
 			for (String key : keys) {
 				httppost.addHeader(key, httpParams.get(key));
 			}
-			httppost.addHeader("verify", "false");
 			try {
 				httppost.setEntity(sEntity);
 				HttpResponse response = null;
 				try {
 					response = httpclient.execute(httppost);
+					int code = response.getStatusLine().getStatusCode();
+					monitor.getApplicationLog().info("Alert URL Post Response Code: " + code);
 					HttpEntity entity = response.getEntity();
 					if (entity != null) {
 						try {
