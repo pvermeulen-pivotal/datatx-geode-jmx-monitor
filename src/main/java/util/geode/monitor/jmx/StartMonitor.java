@@ -2,6 +2,7 @@ package util.geode.monitor.jmx;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -212,7 +213,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 								monitor.getApplicationLog()
 										.info("Alert URL Post Response: " + new String(responseData));
 							} else {
-								monitor.getApplicationLog().warn("No Alert URL Post Response received");
+								monitor.getApplicationLog().info("No Alert URL Post Response received");
 							}
 							instream.close();
 						} catch (Exception e) {
@@ -228,6 +229,14 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 			}
 		} catch (UnsupportedEncodingException e) {
 			monitor.getApplicationLog().error("Error creating string entity exception=" + e.getMessage());
+		}
+		
+		if (httpclient != null) {
+			try {
+				httpclient.close();
+			} catch (IOException e) {
+				monitor.getApplicationLog().error("Error closing HTTPClient exception=" + e.getMessage());
+			}
 		}
 	}
 }
