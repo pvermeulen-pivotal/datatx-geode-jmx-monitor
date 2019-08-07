@@ -207,7 +207,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 					if (entity != null) {
 						try {
 							InputStream instream = entity.getContent();
-							byte[] responseData = null;
+							byte[] responseData = new byte[1000];
 							int bytesRead = instream.read(responseData);
 							if (bytesRead > 0) {
 								monitor.getApplicationLog()
