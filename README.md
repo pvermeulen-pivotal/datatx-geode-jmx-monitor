@@ -70,9 +70,9 @@ When the package is built, maven will use the assembly.xml file to create a zip 
        this.tid = tid;
     }
     
-## Monitor Configuration Files ##
+## Configuration Files ##
 
-### monitor.propertiers ###
+### monitor.properties ###
 The monitor properties are used to define the monitor configuration and behaviuor.
 
 |Property Name|Description|
