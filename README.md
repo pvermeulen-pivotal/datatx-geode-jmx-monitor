@@ -6,7 +6,7 @@ The monitor application provides two (2) additional features.
    1. Supports any of the Geode/GemFire metrics that can be monitored and generates an alert in the event a metric threshold is exceeded.   
    2. Supports a cluster health check that performs validation of member counts, locators, cache servers, gateways and a couple of key metrics to ensure the cluster is healthy.     
 
-These features are controolled by separate threads and execution intervals are defined in the monitor.properties for the health check and in the mxbeans.xml for metrics.
+These features are controlled by separate threads and execution intervals are defined in the monitor.properties for the health check and in the mxbeans.xml for metrics.
 
 The monitor application provides support for multiple locators acting as JMX managers. The monitor connects to only one locator JMX manager at a time and if the locator is stopped or crashed it will connect to the next locator JMX manager in the configured list. Whenever a connection is lost to the locator, the monitor switches to another locator, sends an alert for the lost connection and continues monitoring the GemFire cluster.
 
