@@ -253,8 +253,8 @@ The CMDB service or a file can be used to provide the configuration management d
                	   "host": "RCPLT001",   
                	   "port": 10334   
              	}   
-        ],    
-        "servers": [   
+       	],    
+    	"servers": [   
              	{   
                	   "name": "server1",   
                	   "host": "RCPLT001",   
@@ -265,5 +265,5 @@ The CMDB service or a file can be used to provide the configuration management d
                	   "host": "RCPLT001",   
                	   "port": 40405   
              	}   
-        ]   
+       	]   
    }   
