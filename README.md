@@ -206,7 +206,7 @@ docker run -d -it geode-monitor
 
 ## Start Monitor Script (start_monitor.sh) ##
 
-#!/bin/bash
+#!/bin/bash   
 java -cp java -cp conf/:lib/* -Dlog-file-location=/geode/monitor/logs util.geode.monitor.jmx.StartMonitor  
 
 # Geode/GemFire JMX Monitor Command Client #
@@ -230,8 +230,8 @@ java -cp lib/* util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c 
 
 ## Monitor Command Script (monitor_command.sh) ##
 
-#!/bin/bash
-java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*
+#!/bin/bash   
+java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*   
 
 
 
