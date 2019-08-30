@@ -89,19 +89,19 @@ The health properties are used to define the properties performing cluster healt
 
 |Property Name|Description|
 |-------------|-----------|
-|health-check-cmdb-url|The HTTP/S URL used to retrieve CMDB details for a cluster|
+|health-check-cmdb-url|The HTTP/S URL or file used to retrieve CMDB details for a cluster|
 |health-check-cmdb-url-parms|The HTTP/S header parameters|
 |health-check-cmdb-id|The id of the cluster used by CMDB service to retrieve CMDB details for the cluster|
 
 ### log4j.properties ###
 The log4j properties are used to define the monitor logging behavior.
--Dlog-file-location=C://Develop//datatx-geode-jmx-monitor//logs
+
 log4j.rootLogger=TRACE, stdout
 log4j.rootLogger=OFF
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 log4j.appender.applicationLog=org.apache.log4j.RollingFileAppender
-***log4j.appender.applicationLog.File=/usr/monitor/logs/Alert_Health_Monitor.log***
+***log4j.appender.applicationLog.File=${log-file-location}/Alert_Health_Monitor.log***
 
     Change this property to control where monitor log is written
 
@@ -109,7 +109,7 @@ log4j.appender.applicationLog.layout=org.apache.log4j.PatternLayout
 log4j.appender.applicationLog.MaxFileSize=2000KB
 log4j.appender.applicationLog.MaxBackupIndex=5
 log4j.appender.exceptionLog=org.apache.log4j.RollingFileAppender
-***log4j.appender.exceptionLog.File=/usr/monitor/logs/Alert_Health_Monitor_Exceptions***
+***log4j.appender.exceptionLog.File=${log-file-location}/Alert_Health_Monitor_Exceptions***
 
     Change this property to control where monitor exception log is written
 
@@ -207,11 +207,15 @@ docker run -d -it geode-monitor
 ## Start Monitor Script (start_monitor.sh) ##
 
 #!/bin/bash
-java -cp /usr/monitor/conf:/usr/monitor/lib/* util.geode.monitor.jmx.StartMonitor
+java -cp java -cp conf/:lib/* -Dlog-file-location=/geode/monitor/logs util.geode.monitor.jmx.StartMonitor  
 
 # Geode/GemFire JMX Monitor Command Client #
 
-The Geode/GemFire JMX Monitor Command Client application is used to send commands to the Geode/GemFire JMX Monitor.
+The Geode/GemFire JMX Monitor Command Client application is used to send commands to the Geode/GemFire JMX Monitor. The Monitor Command requires three (3) arguments. 
+
+    -h = hostname or IP address where the Geode/GemFire monitor is running
+    -p = port number the Geode?GemFire JMX Monitor listens for incoming connections.
+    -c = command to run [Reload,Status,Shutdown,Block,Unblock]
 
 ## Client Commands ##
 
@@ -222,16 +226,12 @@ The Geode/GemFire JMX Monitor Command Client application is used to send command
 5. UNBLOCK - This command will unblock alerts for a cluster member. The format of this command is UNBLOCK|[Member Name]
 
 ### Client Command Example ###
-java -cp /usr/monitor/lib/* util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
-
-    -h = hostname or IP address where the Geode?GemFire monitor is running
-    -p = port number the Geode?GemFire JMX Monitor listens for incoming connections.
-    -c = command to run [Reload,Status,Shutdown]
+java -cp lib/* util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
 
 ## Monitor Command Script (monitor_command.sh) ##
 
 #!/bin/bash
-java -cp /usr/monitor/conf:/usr/monitor/lib/* util.geode.monitor.client.MonitorCommand
+java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*
 
 
 
