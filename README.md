@@ -60,6 +60,7 @@ Example:
 
 ### monitor.propertiers ###
 The monitor properties are used to define the monitor configuration and behaviuor.
+
 |Property Name|Description|
 |-------------|-----------|
 |managers|A comma seperated list of locators that have a JMX manager defined|
@@ -71,11 +72,12 @@ The monitor properties are used to define the monitor configuration and behaviuo
 |reconnect-retry-attempts|The number of retry attempts before the monitor will try to use the next locator JMX manager defined in the managers property|
 |log-file-size|The maximum size of a monitor log file|
 |log-file-backups|The number of log backupsto maintain before rolling off the oldest log file|
-|health-check-enabled|A boolean flag used to enable or disable the health check feature of the monitor| |
+|health-check-enabled|A boolean flag used to enable or disable the health check feature of the monitor|
 |health-check-interval|The interval on how often the health check is performed|
 
 ### alert.properties ###
 The alert properties are used to define the properties for sending alerts.
+
 |Property Name|Description|
 |-------------|-----------|
 |alert-url|The HTTP/S URL used to send alerts|
@@ -84,11 +86,12 @@ The alert properties are used to define the properties for sending alerts.
 
 ### health.properties ###
 The health properties are used to define the properties performing cluster health check.
+
 |Property Name|Description|
 |-------------|-----------|
 |health-check-cmdb-url|The HTTP/S URL used to retrieve CMDB details for a cluster|
 |health-check-cmdb-url-parms|The HTTP/S header parameters|
-|health-check-cmdb-id|The id of the cluster used by CMDB service to retrieve CMDB details for the cluster||
+|health-check-cmdb-id|The id of the cluster used by CMDB service to retrieve CMDB details for the cluster|
 
 ### log4j.properties ###
 The log4j properties are used to define the monitor logging behavior.
