@@ -237,7 +237,7 @@ java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*
 
 The CMDB service or a file can be used to provide the configuration management details of a GemFire cluster being monitor and are outlined below:
 
-    {
+      {
     	"cluster": "Cluster-1",   
        	"site": "PasV2",   
        	"environment": "Development",   
@@ -266,4 +266,4 @@ The CMDB service or a file can be used to provide the configuration management d
                	   "port": 40405   
              	}   
        	]   
-   }   
+      }   
