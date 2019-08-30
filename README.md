@@ -1,12 +1,16 @@
 # Geode/GemFire JMX Monitor
 
-The datatx-geode-jmx-monitor project provides an application which is used to monitor a Geode/GemFire cluster and generate alert messages based on JMX notifications sent from Geode/GemFire locator(s) to the monitor. JMX notifications are error messages written to Geode/GemFire logs with a severity of "warning" or higher. Additional notifications that are also sent from the Geode/GemFire locators include the departure, crash or joining of a member to the cluster.
+The datatx-geode-jmx-monitor project provides an application used to monitor a Geode/GemFire cluster and generates alert messages based on JMX notifications sent from Geode/GemFire locator(s) to the monitor. JMX notifications are error messages written to Geode/GemFire logs with a severity of "warning" or higher. Additional notifications that are also sent from the Geode/GemFire locators include the departure, crash or joining of a member to the cluster.
 
-The monitor application has a feature which supports the definition Geode/GemFire metrics that can be monitored to have alerts generated in the event a metric threshold is exceeded.
+The monitor application provides two (2) additional features.    
+   1. Supports any of the Geode/GemFire metrics that can be monitored and generates an alert in the event a metric threshold is exceeded.   
+   2. Supports a cluster health check that performs validation of member counts, locators, cache servers, gateways and a couple of key metrics to ensure the cluster is healthy.     
 
-The monitor provides support for multiple locators acting as JMX managers. The monitor connects to only one locator JMX manager at a time and if the locator is stopped or crashed it will connect to the next locator JMX manager in the configured list. Whenever a connection is lost to the locator, the monitor switches to another locator, sends an alert for the lost connection and continues monitoring the GemFire cluster.
+These features are controolled by separate threads and execution intervals are defined in the monitor.properties for the health check and in the mxbeans.xml for metrics.
 
-This project implements the abstract project datatx-geode-monitor which provides the majority of the monitoring functionality with the exception of the abstract method sendAlert. Users should modify the StartMonitor class and override sendAlert method to manage the endpoint where alerts are sent. 
+The monitor application provides support for multiple locators acting as JMX managers. The monitor connects to only one locator JMX manager at a time and if the locator is stopped or crashed it will connect to the next locator JMX manager in the configured list. Whenever a connection is lost to the locator, the monitor switches to another locator, sends an alert for the lost connection and continues monitoring the GemFire cluster.
+
+This project implements the abstract project datatx-geode-monitor which provides the majority of the monitoring, metrics and device health  functionality with the exception of two abstract methods sendAlert and getCmdbHealth. Users will need to modify the StartMonitor class and override sendAlert and getCmdbHealth methods to manage the endpoint where alerts are sent and a CMDB endpoint or file that defines the details about a cluster. 
 
 ***public abstract void sendAlert(LogMessage logMessage);***
 
@@ -16,6 +20,19 @@ Example:
     public void sendAlert(LogMessage logMessage) {
         log.info("Sending Message: " + logMessage.toString());
     }
+
+***public abstract void getCmdbHealth();***
+
+Example:	
+
+   	@Override
+    public String getCmdbHealth() {
+		if (healthCheckCmdbUrl.toUpperCase().startsWith("USEFILE")) {
+			try {
+				cmdbResponse = new String(Files.readAllBytes(Paths.get(CMDB_HEALTH_JSON)));
+			} catch (IOException e) {
+				monitor.getApplicationLog().error("(getCmdbHealth) file method exception: " + e.getMessage());
+			}
 
 ## LogMessage Format:
 
