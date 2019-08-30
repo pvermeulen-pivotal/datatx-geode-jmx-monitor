@@ -25,14 +25,16 @@ Example:
 
 Example:	
 
-   	@Override
+    @Override
     public String getCmdbHealth() {
-		if (healthCheckCmdbUrl.toUpperCase().startsWith("USEFILE")) {
-			try {
-				cmdbResponse = new String(Files.readAllBytes(Paths.get(CMDB_HEALTH_JSON)));
-			} catch (IOException e) {
-				monitor.getApplicationLog().error("(getCmdbHealth) file method exception: " + e.getMessage());
-			}
+	if (healthCheckCmdbUrl.toUpperCase().startsWith("USEFILE")) {
+		try {
+		      cmdbResponse = new String(Files.readAllBytes(Paths.get(CMDB_HEALTH_JSON)));
+		} catch (IOException e) {
+		      monitor.getApplicationLog().error("(getCmdbHealth) file method exception: " + e.getMessage());
+		}
+	}
+    }
 
 ## LogMessage Format:
 
