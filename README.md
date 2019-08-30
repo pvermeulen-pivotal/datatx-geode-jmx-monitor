@@ -44,7 +44,7 @@ When the package is built, maven will use the assembly.xml file to create a zip 
         lib/   
         logs/   
         README.md   
-	CONFIGURATION_README.md
+        CONFIGURATION_README.md
         start_monitor.sh   
         start_monitor.cmd   
         monitor_command.sh   
