@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
@@ -22,8 +24,9 @@ import javax.xml.bind.JAXBContext;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
@@ -42,22 +45,46 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	private static final String ALERT_URL = "alert-url";
 	private static final String ALERT_URL_PARMS = "alert-url-parms";
 	private static final String ALERT_CLUSTER_FQDN = "alert-cluster-fqdn";
+	private static final String CMDB_HEALTH_JSON = "cmdb-health.json";
+	private static final String HEALTH_PROPS = "health.properties";
+	private static final String HEALTH_CHK_CMDB_URL = "health-check-cmdb-url";
+	private static final String HEALTH_CHK_CMDB_KEY = "health-check-cmdb-key";
+	private static final String HEALTH_CHK_CMDB_URL_PARMS = "health-check-cmdb-url-parms";
 
 	private static Properties alertProps;
-	private static HashMap<String, String> httpParams = new HashMap<String, String>();
 	private static String alertUrl;
 	private static String alertClusterFqdn;
+	private static String healthCheckCmdbUrl;
+	private static String healthCheckCmdbKey;
 	private static StartMonitor monitor;
+
+	private static HashMap<String, String> httpAlertParams = new HashMap<String, String>();
+	private static HashMap<String, String> httpHealthParams = new HashMap<String, String>();
 
 	static public void main(String[] args) throws Exception {
 		monitor = new StartMonitor();
 		boolean opened = true;
-		if (!getSendAlertPropertyFile()) {
+
+		monitor.initialize();
+
+		if (!loadAlertProperties()) {
 			monitor.getApplicationLog().error("Geode/GemFire Monitor failed to load alert property file");
 			return;
 		}
 
-		monitor.initialize();
+		if (!loadHealthProperties()) {
+			monitor.getApplicationLog().error("Geode/GemFire Monitor failed to load health property file");
+			return;
+		}
+
+		JSONObject jObj = new JSONObject(monitor.getCmdbHealth());
+		if (jObj != null) {
+			monitor.setCluster((String)jObj.get("cluster"));
+			monitor.setSite((String) jObj.get("site"));
+			monitor.setEnvironment((String) jObj.getString("environment"));
+		}
+		
+		monitor.start();
 
 		ServerSocket commandSocket = new ServerSocket(monitor.getCommandPort());
 
@@ -80,6 +107,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 				String[] msgParts = message.split("|");
 				if (msgParts != null && msgParts.length == 2) {
 					monitor.addBlocker(msgParts[1]);
+					outToClient.writeBytes(Constants.OK + "\n");
 				} else {
 					outToClient.writeBytes(Constants.INVALID_CMD + "\n");
 				}
@@ -87,6 +115,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 				String[] msgParts = message.split("|");
 				if (msgParts != null && msgParts.length == 2) {
 					monitor.removeBlocker(msgParts[1]);
+					outToClient.writeBytes(Constants.OK + "\n");
 				} else {
 					outToClient.writeBytes(Constants.INVALID_CMD + "\n");
 					monitor.getApplicationLog().warn(Constants.INVALID_CMD);
@@ -129,7 +158,49 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 		return new SSLConnectionSocketFactory(ssl_ctx, allowAllHosts);
 	}
 
-	private static boolean getSendAlertPropertyFile() {
+	private static boolean loadHealthProperties() {
+		boolean healthLoaded = true;
+		Properties healthProps = new Properties();
+		try {
+			healthProps.load(StartMonitor.class.getClassLoader().getResourceAsStream(HEALTH_PROPS));
+			healthCheckCmdbUrl = (String) healthProps.get(HEALTH_CHK_CMDB_URL);
+			healthCheckCmdbKey = (String) healthProps.get(HEALTH_CHK_CMDB_KEY);
+			if (healthCheckCmdbUrl == null || healthCheckCmdbUrl.length() == 0) {
+				if (monitor.isHealthCheck()) {
+					monitor.getApplicationLog().error(
+							"The health-check-cmdb-url in the health.properties file is not defined or is invalid + cmdb-url="
+									+ healthCheckCmdbUrl);
+					healthLoaded = false;
+				}
+			} else {
+				if (!healthCheckCmdbUrl.endsWith("/")) {
+					healthCheckCmdbUrl = healthCheckCmdbUrl + "/";
+				}
+			}
+
+			String urlParams = (String) healthProps.get(HEALTH_CHK_CMDB_URL_PARMS);
+			if (urlParams != null && urlParams.length() > 0) {
+				if (!urlParams.endsWith(";")) {
+					urlParams = urlParams + ";";
+				}
+				String[] params = urlParams.split(";");
+				if (params != null && params.length > 0) {
+					for (String str : params) {
+						String[] keyValue = str.split(",");
+						if (keyValue != null && keyValue.length > 0) {
+							httpHealthParams.put(keyValue[0], keyValue[1]);
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			monitor.getApplicationLog().error("Error loading health.properties. Exception: " + e.getMessage());
+			healthLoaded = false;
+		}
+		return healthLoaded;
+	}
+
+	private static boolean loadAlertProperties() {
 		boolean alertLoaded = false;
 		try {
 			InputStream input = StartMonitor.class.getClassLoader().getResourceAsStream("alert.properties");
@@ -149,7 +220,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 							for (String str : params) {
 								String[] keyValue = str.split(",");
 								if (keyValue != null && keyValue.length > 0) {
-									httpParams.put(keyValue[0], keyValue[1]);
+									httpAlertParams.put(keyValue[0], keyValue[1]);
 								}
 							}
 						}
@@ -172,7 +243,11 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 
 		CloseableHttpClient httpclient = null;
 		try {
-			httpclient = HttpClients.custom().setSSLSocketFactory(setupSSL()).build();
+			if (alertUrl.startsWith("https")) {
+				httpclient = HttpClients.custom().setSSLSocketFactory(setupSSL()).build();
+			} else {
+				httpclient = HttpClients.createDefault();
+			}
 		} catch (Exception e) {
 			monitor.getApplicationLog().error("Error creating custom HttpClients exception=" + e.getMessage());
 		}
@@ -192,9 +267,9 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 
 		try {
 			StringEntity sEntity = new StringEntity(json);
-			Set<String> keys = httpParams.keySet();
+			Set<String> keys = httpAlertParams.keySet();
 			for (String key : keys) {
-				httppost.addHeader(key, httpParams.get(key));
+				httppost.addHeader(key, httpAlertParams.get(key));
 			}
 			try {
 				httppost.setEntity(sEntity);
@@ -230,7 +305,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 		} catch (UnsupportedEncodingException e) {
 			monitor.getApplicationLog().error("Error creating string entity exception=" + e.getMessage());
 		}
-		
+
 		if (httpclient != null) {
 			try {
 				httpclient.close();
@@ -238,5 +313,90 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 				monitor.getApplicationLog().error("Error closing HTTPClient exception=" + e.getMessage());
 			}
 		}
+	}
+
+	/**
+	 * HTTP service to get the health properties from the CMDB
+	 * 
+	 * @return
+	 */
+	@Override
+	public String getCmdbHealth() {
+		CloseableHttpClient httpclient = null;
+		String cmdbResponse = null;
+
+		monitor.getApplicationLog().info("Getting CMDB health");
+
+		if (healthCheckCmdbUrl.toUpperCase().startsWith("USEFILE")) {
+			try {
+				cmdbResponse = new String(Files.readAllBytes(Paths.get(CMDB_HEALTH_JSON)));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				if (healthCheckCmdbUrl.startsWith("https")) {
+					httpclient = HttpClients.custom().setSSLSocketFactory(setupSSL()).build();
+				} else {
+					httpclient = HttpClients.createDefault();
+				}
+
+				URIBuilder builder = new URIBuilder(healthCheckCmdbUrl + healthCheckCmdbKey);
+				HttpGet httpGet = new HttpGet(builder.build());
+				Set<String> keys = httpHealthParams.keySet();
+				for (String key : keys) {
+					httpGet.addHeader(key, httpHealthParams.get(key));
+				}
+				HttpResponse response = null;
+				try {
+					response = httpclient.execute(httpGet);
+					int code = response.getStatusLine().getStatusCode();
+					monitor.getApplicationLog().info("HTTP CMDB response code: " + code);
+					if (code == 200) {
+						HttpEntity entity = response.getEntity();
+						if (entity != null) {
+							try {
+								InputStream instream = entity.getContent();
+								byte[] responseData = new byte[5000];
+								int bytesRead = instream.read(responseData);
+								if (bytesRead > 0) {
+									cmdbResponse = new String(responseData).trim();
+									if (!cmdbResponse.startsWith("{"))
+										cmdbResponse = "{" + cmdbResponse;
+									if (!cmdbResponse.endsWith("}"))
+										cmdbResponse = cmdbResponse + "}";
+									monitor.getApplicationLog().info("CMDB HTTP Get Response: " + cmdbResponse);
+								} else {
+									monitor.getApplicationLog().info("CMDB HTTP no response to Get received");
+								}
+								instream.close();
+							} catch (Exception e) {
+								monitor.getApplicationLog()
+										.error("Error reading HTTP CMDB Get response exception: " + e.getMessage());
+							}
+						} else {
+							monitor.getApplicationLog().warn("HTTP CMDB Get response entity was null");
+						}
+					} else {
+						monitor.getApplicationLog()
+								.error("Invalid response code received from HTTP CMDB Get code = " + code);
+					}
+				} catch (Exception e) {
+					monitor.getApplicationLog().error("Error executing HTTP CMDB Get exception: " + e.getMessage());
+				}
+			} catch (Exception e) {
+				monitor.getApplicationLog().error("Error adding CMDB header/entity exception: " + e.getMessage());
+			}
+
+			if (httpclient != null) {
+				try {
+					httpclient.close();
+				} catch (IOException e) {
+					monitor.getApplicationLog().error("Error closing CMDB HTTP Client exception: " + e.getMessage());
+				}
+			}
+		}
+
+		return cmdbResponse;
 	}
 }
