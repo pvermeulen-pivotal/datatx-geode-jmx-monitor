@@ -36,6 +36,20 @@ Example:
         }
     }
 
+## Installation ##
+The package is built, maven will use the assembly.xml file to create a zip file package containing a deployable monitor. Unzip the package to a location and the zip file creates the monitor directory, all sub-directories, scripts, configuration and jar files.
+
+    monitor
+        conf/   
+        lib/   
+        logs/   
+        README.md   
+	CONFIGURATION_README.md
+        start_monitor.sh   
+        start_monitor.cmd   
+        monitor_command.sh   
+        monitor_command.cmd   
+
 ## LogMessage Format: ##
 
     public class LogMessage {
