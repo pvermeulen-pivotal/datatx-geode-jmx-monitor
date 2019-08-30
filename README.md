@@ -237,37 +237,33 @@ java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*
 
 The CMDB service or a file can be used to provide the configuration management details of a GemFire cluster being monitor and are outlined below:
 
-{
-	"cluster": "Cluster-1",
-	"site": "PasV2",
-	"environment": "Development",
-	"locatorCount": 1,
-	"serverCount": 2,
-	"maximumHeapUsagePercent": 0.95,
-	"maximumGCTimeMillis": 1000,
-	"gateway": "true",
-	"gatewayMaximumQueueSize": 500,
-	"locators": [
-		{
-			"name": "locator1",
-			"host": "RCPLT001",
-			"port": 10334
-		}
-	],
-	"servers": [
-		{
-			"name": "server1",
-			"host": "RCPLT001",
-			"port": 40404
-		},
-		{
-			"name": "server11",
-			"host": "RCPLT001",
-			"port": 40405
-		}
-	]
-}
-
-
-
-
+   {
+       "cluster": "Cluster-1",   
+       "site": "PasV2",   
+       "environment": "Development",   
+       "locatorCount": 1,   
+       "serverCount": 2,   
+       "maximumHeapUsagePercent": 0.95,   
+       "maximumGCTimeMillis": 1000,   
+       "gateway": "true",   
+       "gatewayMaximumQueueSize": 500,   
+       "locators": [   
+             {
+               "name": "locator1",   
+               "host": "RCPLT001",   
+               "port": 10334   
+             }   
+        ],    
+        "servers": [   
+             {   
+               "name": "server1",   
+               "host": "RCPLT001",   
+               "port": 40404   
+             },   
+             {   
+               "name": "server11",   
+               "host": "RCPLT001",   
+               "port": 40405   
+             }   
+        ]   
+   }   
