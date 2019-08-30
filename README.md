@@ -33,7 +33,7 @@ Example:
 		} catch (IOException e) {
 		      monitor.getApplicationLog().error("(getCmdbHealth) file method exception: " + e.getMessage());
 		}
-	}
+        }
     }
 
 ## LogMessage Format:
