@@ -44,18 +44,18 @@ import util.geode.monitor.xml.ExcludedMessages;
 public class StartMonitor extends MonitorImpl implements Monitor {
 	private static final String ALERT_URL = "alert-url";
 	private static final String ALERT_URL_PARMS = "alert-url-parms";
-	private static final String ALERT_CLUSTER_FQDN = "alert-cluster-fqdn";
+	private static final String ALERT_CLUSTER_ID = "alert-cluster-id";
 	private static final String CMDB_HEALTH_JSON = "cmdb-health.json";
 	private static final String HEALTH_PROPS = "health.properties";
 	private static final String HEALTH_CHK_CMDB_URL = "health-check-cmdb-url";
-	private static final String HEALTH_CHK_CMDB_KEY = "health-check-cmdb-key";
+	private static final String HEALTH_CHK_CMDB_ID = "health-check-cmdb-id";
 	private static final String HEALTH_CHK_CMDB_URL_PARMS = "health-check-cmdb-url-parms";
 
 	private static Properties alertProps;
 	private static String alertUrl;
 	private static String alertClusterFqdn;
 	private static String healthCheckCmdbUrl;
-	private static String healthCheckCmdbKey;
+	private static String healthCheckCmdbId;
 	private static StartMonitor monitor;
 
 	private static HashMap<String, String> httpAlertParams = new HashMap<String, String>();
@@ -164,7 +164,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 		try {
 			healthProps.load(StartMonitor.class.getClassLoader().getResourceAsStream(HEALTH_PROPS));
 			healthCheckCmdbUrl = (String) healthProps.get(HEALTH_CHK_CMDB_URL);
-			healthCheckCmdbKey = (String) healthProps.get(HEALTH_CHK_CMDB_KEY);
+			healthCheckCmdbId = (String) healthProps.get(HEALTH_CHK_CMDB_ID);
 			if (healthCheckCmdbUrl == null || healthCheckCmdbUrl.length() == 0) {
 				if (monitor.isHealthCheck()) {
 					monitor.getApplicationLog().error(
@@ -225,7 +225,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 							}
 						}
 					}
-					alertClusterFqdn = alertProps.getProperty(ALERT_CLUSTER_FQDN);
+					alertClusterFqdn = alertProps.getProperty(ALERT_CLUSTER_ID);
 				}
 			} catch (Exception e) {
 				monitor.getApplicationLog().error("Error loading alert.properties Exception: " + e.getMessage());
@@ -331,7 +331,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 			try {
 				cmdbResponse = new String(Files.readAllBytes(Paths.get(CMDB_HEALTH_JSON)));
 			} catch (IOException e) {
-				e.printStackTrace();
+				monitor.getApplicationLog().error("(getCmdbHealth) file method exception: " + e.getMessage());
 			}
 		} else {
 			try {
@@ -341,7 +341,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 					httpclient = HttpClients.createDefault();
 				}
 
-				URIBuilder builder = new URIBuilder(healthCheckCmdbUrl + healthCheckCmdbKey);
+				URIBuilder builder = new URIBuilder(healthCheckCmdbUrl + healthCheckCmdbId);
 				HttpGet httpGet = new HttpGet(builder.build());
 				Set<String> keys = httpHealthParams.keySet();
 				for (String key : keys) {

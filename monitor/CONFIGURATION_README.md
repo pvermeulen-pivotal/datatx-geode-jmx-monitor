@@ -18,17 +18,30 @@ reconnect-wait-time=60
 reconnect-retry-attempts=5   
 log-file-size=2000000   
 log-file-backups=5   
+health-check-enabled=true
+health-check-interval=10
 
 ### alert.properties ###
 
 The following alert properties ***do need*** to be changed for each installation:      
 
 alert-url={The URL used to send cluster/application events}      
-alert-cluster-fqdn={The fqdn name assigned to cluster and configured in the alert-url server}         
+alert-cluster-id={The fqdn name assigned to cluster and configured in the alert-url server}         
 
 The following static alert properties that ***do not need*** to be changed for each installation:        
 
 alert-url-parms=content-type,application/json;cache-control,no-cache;verify,false;   
+
+### health.properties ###
+
+The following alert properties ***do need*** to be changed for each installation:      
+
+health-check-cmdb-url={The URL or file used to get cluster configuration}      
+health-check-cmdb-id={The fqdn name assigned to cluster and configured in the cmdb-url server}         
+
+The following static alert properties that ***do not need*** to be changed for each installation:        
+
+health-check-cmdb-url-parms=content-type,application/json; 
 
 ### log4j.properties ###
 

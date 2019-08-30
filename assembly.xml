@@ -29,6 +29,7 @@
 			<outputDirectory>monitor</outputDirectory>
 			<includes>
 				<include>**/*.sh</include>
+				<include>**/*.cmd</include>
 				<include>**/*.md</include>
 			</includes>
 			<directoryMode>0755</directoryMode>
