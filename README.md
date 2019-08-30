@@ -249,7 +249,8 @@ java -cp lib/* util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c 
 
 ## JSON Payload for CMDB ##
 
-The CMDB service or a file can be used to provide the configuration management details of a GemFire cluster being monitor and are outlined below:
+The CMDB service or a file can be used to provide the configuration management details of a GemFire cluster being monitored.   
+The CMDB JSON payload is outlined below:
 
       {
     	"cluster": "Cluster-1",   
