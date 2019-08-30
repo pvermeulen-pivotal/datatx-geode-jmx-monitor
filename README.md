@@ -50,6 +50,11 @@ When the package is built, maven will use the assembly.xml file to create a zip 
         monitor_command.sh   
         monitor_command.cmd   
 
+## Start Monitor Script (start_monitor.sh/start_monitor.cmd) ##
+
+    #!/bin/bash    
+    java -cp java -cp conf/:lib/* -Dlog-file-location=/geode/monitor/logs util.geode.monitor.jmx.StartMonitor    
+
 ## LogMessage Format: ##
 
     public class LogMessage {
@@ -183,7 +188,7 @@ The mxbeans XML file contain the JMX mBeans objects and associated object proper
    * percentageField - The mBean field that will be used to validate if a threshold for a metric is exceeded.
    * percentageFieldSize - Enum ACTUAL/KILOBYTES/MEGABYTES
    
-## Dockerfile
+## Dockerfile ##
 
 The Geode/GemFire monitor can be run in a docker container. 
 
@@ -218,12 +223,7 @@ docker build -t geode-monitor .
 ### Docker Run ###
 docker run -d -it geode-monitor
 
-## Start Monitor Script (start_monitor.sh) ##
-
-#!/bin/bash   
-java -cp java -cp conf/:lib/* -Dlog-file-location=/geode/monitor/logs util.geode.monitor.jmx.StartMonitor  
-
-# Geode/GemFire JMX Monitor Command Client #
+## Geode/GemFire JMX Monitor Command Client ##
 
 The Geode/GemFire JMX Monitor Command Client application is used to send commands to the Geode/GemFire JMX Monitor. The Monitor Command requires three (3) arguments. 
 
@@ -231,7 +231,12 @@ The Geode/GemFire JMX Monitor Command Client application is used to send command
     -p = port number the Geode?GemFire JMX Monitor listens for incoming connections.
     -c = command to run [Reload,Status,Shutdown,Block,Unblock]
 
-## Client Commands ##
+### Monitor Command Script (monitor_command.sh/monitor_command.cmd) ###
+
+#!/bin/bash   
+java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*   
+
+### Client Commands ###
 
 1. RELOAD - This command will reload the excluded message file to pick up new message exclusions. The execludedMessages.xml file in the Geode/GemFire JMX monitor will need to be modified in the contqainer (if Docker container is used) 
 2. STATUS - Provides the status of the monitor and if the monitor is connected to Geode/GemFire locator(s).
@@ -242,12 +247,7 @@ The Geode/GemFire JMX Monitor Command Client application is used to send command
 ### Client Command Example ###
 java -cp lib/* util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
 
-## Monitor Command Script (monitor_command.sh) ##
-
-#!/bin/bash   
-java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*   
-
-# JSON Payload for CMDB #
+## JSON Payload for CMDB ##
 
 The CMDB service or a file can be used to provide the configuration management details of a GemFire cluster being monitor and are outlined below:
 
