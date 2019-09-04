@@ -270,7 +270,7 @@ The Monitor Command Client script requires three (3) arguments to be passed.
 |Argument|Value|Description|
 |--------|-----|-----------|
 |-h|hostname/IP address|The hostname or IP address of the JMX monitor|
-|-p|port number|The port number the JMX Monitor listens for incoming connections|
+|-p|port number|The port number the JMX Monitor listens for incoming connections from monitor.properties command-port|
 |-c|command|The command to execute|
 |||Reload - Reload excluded message file|
 |||Status - Get status of monitor [RUNNING|RUNNING_CONNECTED]|
