@@ -66,15 +66,15 @@ files and required jar files.
 
 ## Start Monitor Script (start_monitor.sh/start_monitor.cmd) ##
 	
-	The start monitor script is used to start the monitor and requires a runtime property "log-file-location" to be set to the
-	location where the monitor's log and exception files are wriiten. 
+The start monitor script is used to start the monitor and requires a runtime property "log-file-location" to be set to the 
+location where the monitor's log and exception files are wriiten. 
 
     #!/bin/bash    
     java -cp java -cp conf/:lib/* -Dlog-file-location=/geode/monitor/logs util.geode.monitor.jmx.StartMonitor    
 
 ## LogMessage Format: ##
 
-	The following outlines the LogMessage class:   
+The following outlines the LogMessage class:   
 
     public class LogMessage {
        private LogHeader header;
@@ -83,7 +83,7 @@ files and required jar files.
        private int count = 1;
     }
     
-	The following outlines the LogHeader class:   
+The following outlines the LogHeader class:   
 
     public LogHeader(String severity, String date, String time, String zone,
        String member, String event, String tid) {
