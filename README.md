@@ -272,11 +272,11 @@ The Monitor Command Client script requires three (3) arguments to be passed.
 |-h|hostname/IP address|The hostname or IP address of the JMX monitor|
 |-p|port number|The port number the JMX Monitor listens for incoming connections from monitor.properties command-port|
 |-c|command|The command to execute|
-|||Reload - Reload excluded message file|
-|||Status - Get status of monitor [RUNNING/RUNNING_CONNECTED]|
-|||Shutdown - gracefully shuts down the monitor|
-|||Block - Blocks alerts from being sent for a Geode/GemFire cluster member|
-|||Unblock - Un-blocks alerts from being sent for a Geode/GemFire cluster member|
+||Reload|Reload excluded message file|
+||Status|Get status of monitor [RUNNING/RUNNING_CONNECTED]|
+||Shutdown|Gracefully shuts down the monitor|
+||Block|Blocks alerts from being sent for a Geode/GemFire cluster member|
+||Unblock|Unblocks alerts from being sent for a Geode/GemFire cluster member|
 
 ### Client Command Example ###
 java -cp lib/* util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
@@ -286,7 +286,7 @@ java -cp lib/* util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c 
 The monitor requires a connection or a file to define the Geode/GemFire cluster CMDB. The CMDB service or a file is 
 used to provide the configuration details of a GemFire cluster being monitored.   
 
-**CMDB JSON payload is outlined below:**
+***CMDB JSON payload is outlined below:***
 
       {
     	"cluster": "cluster-name",   
