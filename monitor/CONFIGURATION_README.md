@@ -47,8 +47,8 @@ health-check-cmdb-url-parms=content-type,application/json;
 
 The following log4j properties ***do need*** to be changed for each installation:   
       
-log4j.appender.applicationLog.File=/opt/monitor/logs/Alert_Health_Monitor.log   
-log4j.appender.exceptionLog.File=/opt/monitor/logs/Alert_Health_Monitor_Exceptions   
+log4j.appender.applicationLog.File=logs/Alert_Health_Monitor.log   
+log4j.appender.exceptionLog.File=logs/Alert_Health_Monitor_Exceptions   
 
 The following static log4j properties that ***do not need*** to be changed for each installation:   
         
