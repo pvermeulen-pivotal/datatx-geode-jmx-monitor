@@ -205,18 +205,18 @@ sampleTime property is used to define the frequency of the threshold check in mi
 
 The following define the node and attributes fields in the mxbeans.xml file. 
 
-|Value|Description|
-|-----|-----------|
-|mxBeanName|The Geode/GemFire mBean object name|
-|Fields||
-|  Field||
-|   beanProperty|Property defines a particular mBean object name for a region, disk store name, etc.|
-|   fieldName|The mBean field name to monitor|
-|   fieldSize|Enum ACTUAL/KILOBYTES/MEGABYTES|
-|   count|Threshold is a count| 
-|   percentage|Threshold is a percentage|
-|   percentageField|The mBean field or constant that will be used to validate if a threshold for a metric is exceeded.|
-|   percentageFieldSize|Enum ACTUAL/KILOBYTES/MEGABYTES|
+|Node|Name|Attribute|Description|
+|----|----|---------|-----------|
+|mxBeanName|||The Geode/GemFire mBean object name|
+|Fields|||Collection of fields|
+||Field||Field information|
+|||beanProperty|Property defines a particular mBean object name for a region, disk store name, etc.|
+|||fieldName|The mBean field name to monitor|
+|||fieldSize|Enum ACTUAL/KILOBYTES/MEGABYTES|
+|||count|Threshold is a count| 
+|||percentage|Threshold is a percentage|
+|||percentageField|The mBean field or constant that will be used to validate if a threshold for a metric is exceeded.|
+||||percentageFieldSize|Enum ACTUAL/KILOBYTES/MEGABYTES|
    
 ## Dockerfile ##
 
