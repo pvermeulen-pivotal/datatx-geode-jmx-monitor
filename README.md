@@ -216,7 +216,7 @@ The following define the node and attributes fields in the mxbeans.xml file.
 |||count|Threshold is a count| 
 |||percentage|Threshold is a percentage|
 |||percentageField|The mBean field or constant that will be used to validate if a threshold for a metric is exceeded.|
-||||percentageFieldSize|Enum ACTUAL/KILOBYTES/MEGABYTES|
+|||percentageFieldSize|Enum ACTUAL/KILOBYTES/MEGABYTES|
    
 ## Dockerfile ##
 
