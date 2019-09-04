@@ -111,7 +111,7 @@ The monitor properties are used to define the monitor configuration and behavior
 |reconnect-wait-time|The time (in minutes) the monitor will wait before trying to reconnect to a locator|
 |reconnect-retry-attempts|The number of retry attempts before the monitor will try to use the next locator JMX manager defined in the managers property|
 |log-file-size|The maximum size of a monitor log file|
-|log-file-backups|The number of log backupsto maintain before rolling off the oldest log file|
+|log-file-backups|The number of log backups to maintain before rolling off the oldest log file|
 |health-check-enabled|A boolean flag used to enable or disable the health check feature of the monitor|
 |health-check-interval|The interval on how often the health check is performed|
 
