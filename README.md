@@ -193,7 +193,7 @@ sampleTime property is used to define the frequency of the threshold check in mi
                     percentageField="" percentageFieldSize="ACTUAL" />
              </fields>
          </mxBean>
-	 <mxBean mxBeanName="MemberMXBean">
+         <mxBean mxBeanName="MemberMXBean">
              <fields>
  		 <field beanProperty="" fieldName="NumThreads"
 		    fieldSize="ACTUAL" count="0" percentage=".90" percentageField="250" percentageFieldSize="ACTUAL" />
