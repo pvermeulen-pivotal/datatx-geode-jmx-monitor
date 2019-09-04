@@ -99,7 +99,7 @@ The following outlines the LogHeader class:
 ## Configuration Files ##
 
 ### monitor.properties ###
-The monitor properties are used to define the monitor configuration and behaviuor.
+The monitor properties are used to define the monitor configuration and behavior.
 
 |Property Name|Description|
 |-------------|-----------|
