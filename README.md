@@ -121,7 +121,7 @@ The alert properties are used to define the properties for sending alerts.
 |Property Name|Description|
 |-------------|-----------|
 |alert-url|The HTTP/S URL or file used to send or capture alerts|
-||To use a file as output use the format of usefile:location/name|
+||To use a file as output define the value as ***usefile:location/name***|
 |alert-url-parms|The HTTP/S request header parameters|
 |alert-cluster-id|The id of the cluster as defined in the HTTP/S alert database|
 
