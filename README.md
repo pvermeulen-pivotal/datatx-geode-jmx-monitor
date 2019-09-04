@@ -1,16 +1,28 @@
-# Geode/GemFire JMX Monitor
+# Geode/GemFire JMX Monitor #
 
-The datatx-geode-jmx-monitor project provides an application used to monitor a Geode/GemFire cluster and generates alert messages based on JMX notifications sent from Geode/GemFire locator(s) to the monitor. JMX notifications are error messages written to Geode/GemFire logs with a severity of "warning" or higher. Additional notifications that are also sent from the Geode/GemFire locators include the departure, crash or joining of a member to the cluster.
+The datatx-geode-jmx-monitor project is an application to monitor a Geode/GemFire cluster for errors, thresholds and health and 
+generates alert messages based on JMX notifications sent from Geode/GemFire locator(s) to the monitor. 
+
+JMX notifications are error messages written to Geode/GemFire logs with a severity of "warning" or higher. Additional 
+notifications that are also sent from the Geode/GemFire locators include the departure, crash or joining of a member to 
+the cluster.
 
 The monitor application provides two (2) additional features.    
-   1. Supports any of the Geode/GemFire metrics that can be monitored and generates an alert in the event a metric threshold is exceeded.   
-   2. Supports a cluster health check that performs validation of member counts, locators, cache servers, gateways and a couple of key metrics to ensure the cluster is healthy.     
+   1. Supports monitoring any of the Geode/GemFire metrics and generates alert in the event a metric threshold is exceeded.   
+   2. Supports a health check performing validation of member counts, locators, cache servers, gateways along with a couple of key metrics to ensure the cluster is healthy.     
 
-These features are controlled by separate threads and execution intervals are defined in the monitor.properties for the health check and in the mxbeans.xml for metrics.
+The additional features are managed using separate threads and the defined execution intervals are in the monitor.properties 
+for the health check and in the mxbeans.xml for metrics.
 
-The monitor application provides support for multiple locators acting as JMX managers. The monitor connects to only one locator JMX manager at a time and if the locator is stopped or crashed it will connect to the next locator JMX manager in the configured list. Whenever a connection is lost to the locator, the monitor switches to another locator, sends an alert for the lost connection and continues monitoring the GemFire cluster.
+The monitor application supports the definition of multiple locators acting as JMX managers. The monitor will connect to only 
+one locator JMX manager at a time but if the locator is stopped or crashed, the monitor will connect to the next locator JMX manager 
+in the configured list. Whenever a connection is lost to the locator, the monitor switches to another locator, sends an alert 
+for the lost connection and continues monitoring the GemFire cluster.
 
-This project implements the abstract project datatx-geode-monitor which provides the majority of the monitoring, metrics and device health  functionality with the exception of two abstract methods sendAlert and getCmdbHealth. Users will need to modify the StartMonitor class and override sendAlert and getCmdbHealth methods to manage the endpoint where alerts are sent and a CMDB endpoint or file that defines the details about a cluster. 
+This project implements the abstract project datatx-geode-monitor which provides the majority of the monitoring, metrics and 
+device health  functionality with the exception of two abstract methods sendAlert and getCmdbHealth. Users will need to modify 
+the StartMonitor class and override sendAlert and getCmdbHealth methods to manage the endpoint where alerts are sent and a 
+CMDB endpoint or file that defines the details about a cluster. 
 
 ***public abstract void sendAlert(LogMessage logMessage);***
 
@@ -37,7 +49,9 @@ Example:
     }
 
 ## Installation ##
-When the package is built, maven will use the assembly.xml file to create a zip file package containing a deployable monitor. Unzip the package to a location and the zip file creates the monitor directory, all sub-directories, scripts, configuration and jar files.
+When the package is built, maven will use the assembly.xml file to create a zip file containing a deployable monitor. Unzip 
+the package file to a location and the unzipped file creates the monitor directory, all sub-directories, scripts, configuration 
+files and required jar files.
 
     monitor
         conf/   
@@ -51,11 +65,16 @@ When the package is built, maven will use the assembly.xml file to create a zip 
         monitor_command.cmd   
 
 ## Start Monitor Script (start_monitor.sh/start_monitor.cmd) ##
+	
+	The start monitor script is used to start the monitor and requires a runtime property "log-file-location" to be set to the
+	location where the monitor's log and exception files are wriiten. 
 
     #!/bin/bash    
     java -cp java -cp conf/:lib/* -Dlog-file-location=/geode/monitor/logs util.geode.monitor.jmx.StartMonitor    
 
 ## LogMessage Format: ##
+
+	The following outlines the LogMessage class:   
 
     public class LogMessage {
        private LogHeader header;
@@ -64,6 +83,8 @@ When the package is built, maven will use the assembly.xml file to create a zip 
        private int count = 1;
     }
     
+	The following outlines the LogHeader class:   
+
     public LogHeader(String severity, String date, String time, String zone,
        String member, String event, String tid) {
        this.severity = severity;
@@ -99,7 +120,8 @@ The alert properties are used to define the properties for sending alerts.
 
 |Property Name|Description|
 |-------------|-----------|
-|alert-url|The HTTP/S URL used to send alerts|
+|alert-url|The HTTP/S URL or file used to send or capture alerts|
+||To use a file as output use the format of usefile:location/name|
 |alert-url-parms|The HTTP/S request header parameters|
 |alert-cluster-id|The id of the cluster as defined in the HTTP/S alert database|
 
@@ -109,6 +131,7 @@ The health properties are used to define the properties performing cluster healt
 |Property Name|Description|
 |-------------|-----------|
 |health-check-cmdb-url|The HTTP/S URL or file used to retrieve CMDB details for a cluster|
+||To use a file as input use the format of usefile:location/name|
 |health-check-cmdb-url-parms|The HTTP/S header parameters|
 |health-check-cmdb-id|The id of the cluster used by CMDB service to retrieve CMDB details for the cluster|
 
@@ -120,17 +143,13 @@ log4j.rootLogger=OFF
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 log4j.appender.applicationLog=org.apache.log4j.RollingFileAppender
-***log4j.appender.applicationLog.File=${log-file-location}/Alert_Health_Monitor.log***
-
-    Change this property to control where monitor log is written
+log4j.appender.applicationLog.File=***${log-file-location}***/Alert_Health_Monitor.log
 
 log4j.appender.applicationLog.layout=org.apache.log4j.PatternLayout
 log4j.appender.applicationLog.MaxFileSize=2000KB
 log4j.appender.applicationLog.MaxBackupIndex=5
 log4j.appender.exceptionLog=org.apache.log4j.RollingFileAppender
-***log4j.appender.exceptionLog.File=${log-file-location}/Alert_Health_Monitor_Exceptions***
-
-    Change this property to control where monitor exception log is written
+log4j.appender.exceptionLog.File=***${log-file-location}***/Alert_Health_Monitor_Exception
 
 log4j.appender.exceptionLog.layout=org.apache.log4j.PatternLayout
 log4j.appender.exceptionLog.MaxFileSize=2000KB
@@ -141,7 +160,7 @@ log4j.category.exceptionLog=DEBUG, exceptionLog
 log4j.additivity.exceptionLog=false
 
 ### gemfireThreads.xml ###
-The gemfireThreads XML file contain the messages generated by Geode/GemFire threads that will be supprersed by the monitor.
+The gemfireThreads XML file contain the messages generated by Geode/GemFire threads that are suppressed by the monitor.
 
     <gemfireThreads>
         <gemfireThread thread="Event Processor for GatewaySender" />
@@ -149,7 +168,7 @@ The gemfireThreads XML file contain the messages generated by Geode/GemFire thre
     </gemfireThreads>
 
 ### excludedMessages.xml ###
-The excludedMessages XML file contain the messages or message snippets generated by Geode/GemFire that will be suppressed by the monitor.
+The excludedMessages XML file contain the messages or message snippets generated by Geode/GemFire that are suppressed by the monitor.
 
     <excludedMessages>
         <excludedMessage>
@@ -162,7 +181,8 @@ The excludedMessages XML file contain the messages or message snippets generated
     </excludedMessages>
 
 ### mxbeans.xml ###
-The mxbeans XML file contain the JMX mBeans objects and associated object properties used to monitor Geode/GemFire metrics
+The mxbeans XML file contain the JMX mBeans Geode/GemFire objects and associated object properties for threshold monitoring. The 
+sampleTime property is used to define the frequency of the threshold check in milliseconds.
 
     <mxBeans sampleTime="5000">
          <mxBean mxBeanName="DistributedSystemMXBean">
@@ -177,16 +197,20 @@ The mxbeans XML file contain the JMX mBeans objects and associated object proper
 
 ### mxBean XML Properties ###
 
-1. mxBeanName - The Geode/GemFire mBean object name
-2. Fields
-3. Field
-   * beanProperty - This property is used define a particular mBean object such as a region, disk store name, etc
-   * fieldName - The mBean field name to monitor
-   * fieldSize - Enum ACTUAL/KILOBYTES/MEGABYTES
-   * count - Threashold as a count 
-   * percentage - Threshold as a percentage 
-   * percentageField - The mBean field that will be used to validate if a threshold for a metric is exceeded.
-   * percentageFieldSize - Enum ACTUAL/KILOBYTES/MEGABYTES
+The following define the node and attributes fields in the mxbeans.xml file. 
+
+|Value|Description|
+|-----|-----------|
+|mxBeanName|The Geode/GemFire mBean object name|
+|Fields||
+|  Field||
+|   beanProperty|Property defines a particular mBean object name for a region, disk store name, etc.|
+|   fieldName|The mBean field name to monitor|
+|   fieldSize|Enum ACTUAL/KILOBYTES/MEGABYTES|
+|   count|Threshold is a count| 
+|   percentage|Threshold is a percentage|
+|   percentageField|The mBean field or constant that will be used to validate if a threshold for a metric is exceeded.|
+|   percentageFieldSize|Enum ACTUAL/KILOBYTES/MEGABYTES|
    
 ## Dockerfile ##
 
@@ -218,45 +242,51 @@ The Geode/GemFire monitor can be run in a docker container.
 
 ### Docker Build ###
 
+To build the docker image, use the following docker command.
+
 docker build -t geode-monitor .
 
 ### Docker Run ###
+
+To run the docker image, use the following docker command.
+
 docker run -d -it geode-monitor
 
 ## Geode/GemFire JMX Monitor Command Client ##
 
-The Geode/GemFire JMX Monitor Command Client application is used to send commands to the Geode/GemFire JMX Monitor. The Monitor Command requires three (3) arguments. 
-
-    -h = hostname or IP address where the Geode/GemFire monitor is running
-    -p = port number the Geode?GemFire JMX Monitor listens for incoming connections.
-    -c = command to run [Reload,Status,Shutdown,Block,Unblock]
+The Geode/GemFire JMX Monitor Command Client application is used to send commands to the Geode/GemFire JMX Monitor. 
 
 ### Monitor Command Script (monitor_command.sh/monitor_command.cmd) ###
 
 #!/bin/bash   
 java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*   
 
-### Client Commands ###
+The Monitor Command Client script requires three (3) arguments to be passed. 
 
-1. RELOAD - This command will reload the excluded message file to pick up new message exclusions. The execludedMessages.xml file in the Geode/GemFire JMX monitor will need to be modified in the contqainer (if Docker container is used) 
-2. STATUS - Provides the status of the monitor and if the monitor is connected to Geode/GemFire locator(s).
-3. SHUTDOWN - Shutdown the Geode/GemFire JMX monitor
-4. BLOCK - This command will block alerts for a cluster member. The format of this command is BLOCK|[Member Name]
-5. UNBLOCK - This command will unblock alerts for a cluster member. The format of this command is UNBLOCK|[Member Name]
+|Argument|Value|Description|
+|-h|hostname/IP address|The hostname or IP address of the JMX monitor|
+|-p|port number|The port number the JMX Monitor listens for incoming connections|
+|-c|command|The command to execute|
+|||Reload - Reload excluded message file|
+|||Status - Get status of monitor [RUNNING|RUNNING_CONNECTED]|
+|||Shutdown - gracefully shuts down the monitor|
+|||Block - Blocks alerts from being sent for a Geode/GemFire cluster member|
+|||Unblock - Un-blocks alerts from being sent for a Geode/GemFire cluster member|
 
 ### Client Command Example ###
 java -cp lib/* util.geode.monitor.client.MonitorCommand -h localhost -p 1099 -c status
 
 ## JSON Payload for CMDB ##
 
-The CMDB service or a file can be used to provide the configuration management details of a GemFire cluster being monitored.   
+The monitor requires a connection or a file to define the Geode/GemFire cluster CMDB. The CMDB service or a file is 
+used to provide the configuration details of a GemFire cluster being monitored.   
 
 **CMDB JSON payload is outlined below:**
 
       {
-    	"cluster": "Cluster-1",   
-       	"site": "PasV2",   
-       	"environment": "Development",   
+    	"cluster": "cluster-name",   
+       	"site": "cluster-site",   
+       	"environment": "cluster-environment",   
        	"locatorCount": 1,   
        	"serverCount": 2,   
        	"maximumHeapUsagePercent": 0.95,   
@@ -266,19 +296,19 @@ The CMDB service or a file can be used to provide the configuration management d
        	"locators": [   
              	{
                	   "name": "locator1",   
-               	   "host": "RCPLT001",   
+               	   "host": "hostname",   
                	   "port": 10334   
              	}   
        	],    
     	"servers": [   
              	{   
                	   "name": "server1",   
-               	   "host": "RCPLT001",   
+               	   "host": "hostname",   
                	   "port": 40404   
              	},   
              	{   
                	   "name": "server11",   
-               	   "host": "RCPLT001",   
+               	   "host": "hostname",   
                	   "port": 40405   
              	}   
        	]   
