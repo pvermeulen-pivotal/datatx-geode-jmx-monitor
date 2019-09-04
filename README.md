@@ -49,7 +49,7 @@ Example:
     }
 
 ## Installation ##
-When the package is built, maven will use the assembly.xml file to create a zip file containing a deployable monitor. Unzip 
+When the package is built, maven uses an assembly.xml file to create a zip file containing a deployable monitor. Unzip 
 the package file to a location and the unzipped file creates the monitor directory, all sub-directories, scripts, configuration 
 files and required jar files.
 
