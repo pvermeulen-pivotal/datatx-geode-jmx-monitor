@@ -258,11 +258,9 @@ To run the docker image, use the following docker command.
 
 docker run -d -it geode-monitor
 
-## Geode/GemFire JMX Monitor Command Client ##
+## Monitor Command Script (monitor_command.sh/monitor_command.cmd) ##
 
-The Geode/GemFire JMX Monitor Command Client application is used to send commands to the Geode/GemFire JMX Monitor. 
-
-### Monitor Command Script (monitor_command.sh/monitor_command.cmd) ###
+The Geode/GemFire JMX Monitor Command is used to send commands to the Geode/GemFire JMX Monitor. 
 
 #!/bin/bash   
 java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*   
@@ -270,6 +268,7 @@ java -cp conf/:lib/* util.geode.monitor.client.MonitorCommand $*
 The Monitor Command Client script requires three (3) arguments to be passed. 
 
 |Argument|Value|Description|
+|--------|-----|-----------|
 |-h|hostname/IP address|The hostname or IP address of the JMX monitor|
 |-p|port number|The port number the JMX Monitor listens for incoming connections|
 |-c|command|The command to execute|
