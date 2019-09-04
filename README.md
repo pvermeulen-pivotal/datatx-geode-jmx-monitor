@@ -273,7 +273,7 @@ The Monitor Command Client script requires three (3) arguments to be passed.
 |-p|port number|The port number the JMX Monitor listens for incoming connections from monitor.properties command-port|
 |-c|command|The command to execute|
 |||Reload - Reload excluded message file|
-|||Status - Get status of monitor [RUNNING|RUNNING_CONNECTED]|
+|||Status - Get status of monitor [RUNNING/RUNNING_CONNECTED]|
 |||Shutdown - gracefully shuts down the monitor|
 |||Block - Blocks alerts from being sent for a Geode/GemFire cluster member|
 |||Unblock - Un-blocks alerts from being sent for a Geode/GemFire cluster member|
