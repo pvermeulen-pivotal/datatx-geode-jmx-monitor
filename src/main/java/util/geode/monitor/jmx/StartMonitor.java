@@ -35,6 +35,8 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import util.geode.monitor.Constants;
@@ -74,7 +76,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	private HashMap<String, String> httpHealthParams = new HashMap<String, String>();
 
 	private static StartMonitor monitor;
-	
+
 	/**
 	 * Main monitor method
 	 * 
@@ -93,16 +95,16 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 			return;
 		}
 
-		if (!monitor.loadHealthProperties()) {
+		if (!monitor.loadHealthProperties(monitor.isHealthCheck(), monitor.getApplicationLog())) {
 			monitor.getApplicationLog().error("(main) Geode/GemFire Monitor failed to load health.properties file");
 			return;
 		}
 
-		JSONObject jObj = new JSONObject(monitor.getCmdbHealth());
+		JSONObject jObj = new JSONObject(monitor.getCmdbHealth(monitor.getApplicationLog()));
 		if (jObj != null) {
-			monitor.setCluster((String) jObj.get(CLUSTER));
-			monitor.setSite((String) jObj.get(SITE));
-			monitor.setEnvironment((String) jObj.getString(ENVIRONMENT));
+			monitor.setCluster((String) monitor.getJsonField(jObj, CLUSTER, monitor.getApplicationLog()));
+			monitor.setSite((String) monitor.getJsonField(jObj, SITE, monitor.getApplicationLog()));
+			monitor.setEnvironment((String) monitor.getJsonField(jObj, ENVIRONMENT, monitor.getApplicationLog()));
 		}
 
 		monitor.start();
@@ -156,6 +158,15 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 		}
 	}
 
+	private Object getJsonField(JSONObject jObj, String key, Logger log) {
+		try {
+			return jObj.get(key);
+		} catch (JSONException e) {
+			log.error("(getJsonField) Failed to return value for json field " + key);
+		}
+		return null;
+	}
+
 	/**
 	 * TrustManager
 	 * 
@@ -200,42 +211,37 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	 * loads the health.properties file
 	 * 
 	 * @return
+	 * @throws Exception
 	 */
-	private boolean loadHealthProperties() {
+	private boolean loadHealthProperties(boolean healthCheck, Logger log) throws Exception {
 		boolean healthLoaded = true;
 		Properties healthProps = new Properties();
-		try {
-			healthProps.load(StartMonitor.class.getClassLoader().getResourceAsStream(HEALTH_PROPS));
-			healthCheckCmdbUrl = (String) healthProps.get(HEALTH_CHK_CMDB_URL);
-			healthCheckCmdbId = (String) healthProps.get(HEALTH_CHK_CMDB_ID);
-			if (healthCheckCmdbUrl == null || healthCheckCmdbUrl.length() == 0) {
-				if (monitor.isHealthCheck()) {
-					monitor.getApplicationLog().error(
-							"(loadHealthProperties) The health-check-cmdb-url in the health.properties file is not defined or is invalid + cmdb-url="
-									+ healthCheckCmdbUrl);
-					healthLoaded = false;
-				}
+		healthProps.load(StartMonitor.class.getClassLoader().getResourceAsStream(HEALTH_PROPS));
+		healthCheckCmdbUrl = (String) healthProps.get(HEALTH_CHK_CMDB_URL);
+		healthCheckCmdbId = (String) healthProps.get(HEALTH_CHK_CMDB_ID);
+		if (healthCheckCmdbUrl == null || healthCheckCmdbUrl.length() == 0) {
+			if (healthCheck) {
+				log.error(
+						"(loadHealthProperties) The health-check-cmdb-url in the health.properties file is not defined or is invalid + cmdb-url="
+								+ healthCheckCmdbUrl);
+				healthLoaded = false;
 			}
+		}
 
-			String urlParams = (String) healthProps.get(HEALTH_CHK_CMDB_URL_PARMS);
-			if (urlParams != null && urlParams.length() > 0) {
-				if (!urlParams.endsWith(SEMI_COLON)) {
-					urlParams = urlParams + SEMI_COLON;
-				}
-				String[] params = urlParams.split(SEMI_COLON);
-				if (params != null && params.length > 0) {
-					for (String str : params) {
-						String[] keyValue = str.split(COMMA);
-						if (keyValue != null && keyValue.length > 0) {
-							httpHealthParams.put(keyValue[0], keyValue[1]);
-						}
+		String urlParams = (String) healthProps.get(HEALTH_CHK_CMDB_URL_PARMS);
+		if (urlParams != null && urlParams.length() > 0) {
+			if (!urlParams.endsWith(SEMI_COLON)) {
+				urlParams = urlParams + SEMI_COLON;
+			}
+			String[] params = urlParams.split(SEMI_COLON);
+			if (params != null && params.length > 0) {
+				for (String str : params) {
+					String[] keyValue = str.split(COMMA);
+					if (keyValue != null && keyValue.length > 0) {
+						httpHealthParams.put(keyValue[0], keyValue[1]);
 					}
 				}
 			}
-		} catch (IOException e) {
-			monitor.getApplicationLog()
-					.error("(loadHealthProperties) Error loading health.properties. Exception: " + e.getMessage());
-			healthLoaded = false;
 		}
 		return healthLoaded;
 	}
@@ -246,41 +252,32 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	 * loads the alert.properties file
 	 * 
 	 * @return
+	 * @throws Exception
 	 */
-	private boolean loadAlertProperties() {
+	private boolean loadAlertProperties() throws Exception {
 		boolean alertLoaded = false;
-		try {
-			InputStream input = StartMonitor.class.getClassLoader().getResourceAsStream(ALERT_PROPS);
-			alertProps = new Properties();
-			try {
-				alertProps.load(input);
-				alertUrl = (String) alertProps.get(ALERT_URL);
-				if (alertUrl != null && alertUrl.length() > 0) {
-					alertLoaded = true;
-					String urlParams = (String) alertProps.get(ALERT_URL_PARMS);
-					if (urlParams != null && urlParams.length() > 0) {
-						if (!urlParams.endsWith(SEMI_COLON)) {
-							urlParams = urlParams + SEMI_COLON;
-						}
-						String[] params = urlParams.split(SEMI_COLON);
-						if (params != null && params.length > 0) {
-							for (String str : params) {
-								String[] keyValue = str.split(COMMA);
-								if (keyValue != null && keyValue.length > 0) {
-									httpAlertParams.put(keyValue[0], keyValue[1]);
-								}
-							}
+		InputStream input = StartMonitor.class.getClassLoader().getResourceAsStream(ALERT_PROPS);
+		alertProps = new Properties();
+		alertProps.load(input);
+		alertUrl = (String) alertProps.get(ALERT_URL);
+		if (alertUrl != null && alertUrl.length() > 0) {
+			alertLoaded = true;
+			String urlParams = (String) alertProps.get(ALERT_URL_PARMS);
+			if (urlParams != null && urlParams.length() > 0) {
+				if (!urlParams.endsWith(SEMI_COLON)) {
+					urlParams = urlParams + SEMI_COLON;
+				}
+				String[] params = urlParams.split(SEMI_COLON);
+				if (params != null && params.length > 0) {
+					for (String str : params) {
+						String[] keyValue = str.split(COMMA);
+						if (keyValue != null && keyValue.length > 0) {
+							httpAlertParams.put(keyValue[0], keyValue[1]);
 						}
 					}
-					alertClusterId = alertProps.getProperty(ALERT_CLUSTER_ID);
 				}
-			} catch (Exception e) {
-				monitor.getApplicationLog()
-						.error("(loadAlertProperties) Error loading alert.properties Exception: " + e.getMessage());
 			}
-		} catch (Exception e) {
-			monitor.getApplicationLog()
-					.error("(loadAlertProperties) Error loading alert.properties Exception: " + e.getMessage());
+			alertClusterId = alertProps.getProperty(ALERT_CLUSTER_ID);
 		}
 		return alertLoaded;
 	}
@@ -295,9 +292,8 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	 * @return
 	 */
 	@Override
-	public void sendAlert(LogMessage logMessage) {
-		monitor.getApplicationLog()
-				.debug("(sendAlert) Sending Alert Message: url=" + alertUrl + " message=" + logMessage.toString());
+	public void sendAlert(LogMessage logMessage, Logger log) {
+		log.debug("(sendAlert) Sending Alert Message: url=" + alertUrl + " message=" + logMessage.toString());
 
 		String severity = logMessage.getHeader().getSeverity();
 		if (logMessage.getHeader().getSeverity().equals(Constants.WARNING)) {
@@ -307,7 +303,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 		String json = new JSONObject().put("fqdn", alertClusterId).put("severity", severity)
 				.put("message", logMessage.getHeader().toString() + " " + logMessage.getBody()).toString();
 
-		monitor.getApplicationLog().info("(sendAlert) Sending Alert Message json payload=" + json);
+		log.info("(sendAlert) Sending Alert Message json payload=" + json);
 
 		if (alertUrl.toUpperCase().startsWith(USE_FILE)) {
 			try {
@@ -316,11 +312,10 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 					FileUtils.writeStringToFile(new File(alertUrl.substring(USE_FILE.length())), json,
 							Charset.defaultCharset(), true);
 				} else {
-					monitor.getApplicationLog()
-							.error("(sendAlert) file method exception: no file defined in " + alertUrl);
+					log.error("(sendAlert) file method exception: no file defined in " + alertUrl);
 				}
 			} catch (IOException e) {
-				monitor.getApplicationLog().error("(sendAlert) file method exception: " + e.getMessage());
+				log.error("(sendAlert) file method exception: " + e.getMessage());
 			}
 			return;
 		}
@@ -333,8 +328,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 				httpclient = HttpClients.createDefault();
 			}
 		} catch (Exception e) {
-			monitor.getApplicationLog()
-					.error("(sendAlert) Error creating custom HttpClients exception=" + e.getMessage());
+			log.error("(sendAlert) Error creating custom HttpClients exception=" + e.getMessage());
 		}
 		if (httpclient == null)
 			return;
@@ -354,7 +348,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 					response = httpclient.execute(httppost);
 					int code = response.getStatusLine().getStatusCode();
 					if (code != 201) {
-						monitor.getApplicationLog().info("(sendAlert) Alert URL Post Response Code: " + code);
+						log.info("(sendAlert) Alert URL Post Response Code: " + code);
 					}
 					HttpEntity entity = response.getEntity();
 					if (entity != null) {
@@ -363,35 +357,31 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 							byte[] responseData = new byte[5000];
 							int bytesRead = instream.read(responseData);
 							if (bytesRead > 0) {
-								monitor.getApplicationLog()
-										.debug("(sendAlert) Alert URL Post Response: " + new String(responseData));
+								log.debug("(sendAlert) Alert URL Post Response: " + new String(responseData));
 							} else {
-								monitor.getApplicationLog().info("(sendAlert) No Alert URL Post Response received");
+								log.info("(sendAlert) No Alert URL Post Response received");
 							}
 							responseData = null;
 							instream.close();
 						} catch (Exception e) {
-							monitor.getApplicationLog()
-									.error("(sendAlert) Error reading http response exception: " + e.getMessage());
+							log.error("(sendAlert) Error reading http response exception: " + e.getMessage());
 						}
 					}
 				} catch (Exception e) {
-					monitor.getApplicationLog()
-							.error("(sendAlert) Error executing HTTP post exception: " + e.getMessage());
+					log.error("(sendAlert) Error executing HTTP post exception: " + e.getMessage());
 				}
 			} catch (Exception e) {
-				monitor.getApplicationLog()
-						.error("(sendAlert) Error adding header/entity exception: " + e.getMessage());
+				log.error("(sendAlert) Error adding header/entity exception: " + e.getMessage());
 			}
 		} catch (UnsupportedEncodingException e) {
-			monitor.getApplicationLog().error("(sendAlert) Error creating string entity exception=" + e.getMessage());
+			log.error("(sendAlert) Error creating string entity exception=" + e.getMessage());
 		}
 
 		if (httpclient != null) {
 			try {
 				httpclient.close();
 			} catch (IOException e) {
-				monitor.getApplicationLog().error("(sendAlert) Error closing HTTPClient exception=" + e.getMessage());
+				log.error("(sendAlert) Error closing HTTPClient exception=" + e.getMessage());
 			}
 		}
 	}
@@ -404,11 +394,11 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	 * @return
 	 */
 	@Override
-	public String getCmdbHealth() {
+	public String getCmdbHealth(Logger log) {
 		CloseableHttpClient httpclient = null;
 		String cmdbResponse = null;
 
-		monitor.getApplicationLog().debug("(getCmdbHealth) Getting CMDB health");
+		log.debug("(getCmdbHealth) Getting CMDB health");
 
 		if (healthCheckCmdbUrl.toUpperCase().startsWith(USE_FILE)) {
 			try {
@@ -417,11 +407,10 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 					cmdbResponse = new String(Files.readAllBytes(Paths.get(CMDB_HEALTH_JSON)));
 					return cmdbResponse;
 				} else {
-					monitor.getApplicationLog()
-							.error("(getCmdbHealth) file method exception: no file defined in " + healthCheckCmdbUrl);
+					log.error("(getCmdbHealth) file method exception: no file defined in " + healthCheckCmdbUrl);
 				}
 			} catch (IOException e) {
-				monitor.getApplicationLog().error("(getCmdbHealth) file method exception: " + e.getMessage());
+				log.error("(getCmdbHealth) file method exception: " + e.getMessage());
 			}
 			return null;
 		}
@@ -449,7 +438,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 			try {
 				response = httpclient.execute(httpGet);
 				int code = response.getStatusLine().getStatusCode();
-				monitor.getApplicationLog().debug("(getCmdbHealth) HTTP CMDB response code: " + code);
+				log.debug("(getCmdbHealth) HTTP CMDB response code: " + code);
 				if (code == 200) {
 					HttpEntity entity = response.getEntity();
 					if (entity != null) {
@@ -463,41 +452,34 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 									cmdbResponse = "{" + cmdbResponse;
 								if (!cmdbResponse.endsWith("}"))
 									cmdbResponse = cmdbResponse + "}";
-								monitor.getApplicationLog()
-										.info("(getCmdbHealth) CMDB HTTP Get Response: " + cmdbResponse);
+								log.info("(getCmdbHealth) CMDB HTTP Get Response: " + cmdbResponse);
 							} else {
-								monitor.getApplicationLog()
-										.info("(getCmdbHealth) CMDB HTTP no response to Get received");
+								log.info("(getCmdbHealth) CMDB HTTP no response to Get received");
 							}
 							responseData = null;
 							instream.close();
 						} catch (Exception e) {
-							monitor.getApplicationLog()
-									.error("(getCmdbHealth) Error reading HTTP CMDB Get response exception: "
-											+ e.getMessage());
+							log.error("(getCmdbHealth) Error reading HTTP CMDB Get response exception: "
+									+ e.getMessage());
 						}
 					} else {
-						monitor.getApplicationLog().warn("(getCmdbHealth) HTTP CMDB Get response entity was null");
+						log.warn("(getCmdbHealth) HTTP CMDB Get response entity was null");
 					}
 				} else {
-					monitor.getApplicationLog()
-							.error("(getCmdbHealth) Invalid response code received from HTTP CMDB Get code = " + code);
+					log.error("(getCmdbHealth) Invalid response code received from HTTP CMDB Get code = " + code);
 				}
 			} catch (Exception e) {
-				monitor.getApplicationLog()
-						.error("(getCmdbHealth) Error executing HTTP CMDB Get exception: " + e.getMessage());
+				log.error("(getCmdbHealth) Error executing HTTP CMDB Get exception: " + e.getMessage());
 			}
 		} catch (Exception e) {
-			monitor.getApplicationLog()
-					.error("(getCmdbHealth) Error adding CMDB header/entity exception: " + e.getMessage());
+			log.error("(getCmdbHealth) Error adding CMDB header/entity exception: " + e.getMessage());
 		}
 
 		if (httpclient != null) {
 			try {
 				httpclient.close();
 			} catch (IOException e) {
-				monitor.getApplicationLog()
-						.error("(getCmdbHealth) Error closing CMDB HTTP Client exception: " + e.getMessage());
+				log.error("(getCmdbHealth) Error closing CMDB HTTP Client exception: " + e.getMessage());
 			}
 		}
 

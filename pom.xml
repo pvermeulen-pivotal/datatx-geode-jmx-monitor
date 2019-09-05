@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>util.datatx.geode</groupId>
 	<artifactId>datatx-geode-jmx-monitor</artifactId>
-	<version>1.0.0.SNAPSHOT</version>
+	<version>1.0.0.RELEASE</version>
 
 	<build>
 		<plugins>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>util.datatx.geode</groupId>
 			<artifactId>datatx-geode-monitor</artifactId>
-			<version>1.0.0.SNAPSHOT</version>
+			<version>1.0.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
