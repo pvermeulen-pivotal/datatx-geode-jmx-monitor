@@ -1,11 +1,9 @@
 # Geode/GemFire JMX Monitor #
 
-The datatx-geode-jmx-monitor project is an application to monitor a Geode/GemFire cluster for errors, thresholds and health and 
-generates alert messages based on JMX notifications sent from Geode/GemFire locator(s) to the monitor. 
+The datatx-geode-jmx-monitor project is an application to monitor a Geode/GemFire cluster for errors, exceeded thresholds, health check and 
+generates an alert message based on JMX notifications sent from Geode/GemFire locator(s) to the monitor. 
 
-JMX notifications are error messages written to Geode/GemFire logs with a severity of "warning" or higher. Additional 
-notifications that are also sent from the Geode/GemFire locators include the departure, crash or joining of a member to 
-the cluster.
+JMX notifications are either error messages written to Geode/GemFire logs with a severity of "warning" or higher or notifications that are sent from the JMX agent for the departure, crash or joining of a member to the cluster.
 
 The monitor application provides two (2) additional features.    
    1. Supports monitoring any of the Geode/GemFire metrics and generates alert in the event a metric threshold is exceeded.   
