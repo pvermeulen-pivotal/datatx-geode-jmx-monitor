@@ -75,8 +75,6 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	private HashMap<String, String> httpAlertParams = new HashMap<String, String>();
 	private HashMap<String, String> httpHealthParams = new HashMap<String, String>();
 
-	private static StartMonitor monitor;
-
 	/**
 	 * Main monitor method
 	 * 
@@ -86,7 +84,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	 */
 	static public void main(String[] args) throws Exception {
 		boolean opened = true;
-		monitor = new StartMonitor();
+		StartMonitor monitor = new StartMonitor();
 
 		monitor.initialize();
 
