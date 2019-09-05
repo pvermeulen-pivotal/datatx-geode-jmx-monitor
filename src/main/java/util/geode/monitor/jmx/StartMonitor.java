@@ -65,16 +65,16 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	private static final String SEMI_COLON = ";";
 	private static final String COMMA = ",";
 
-	private static Properties alertProps;
-	private static String alertUrl;
-	private static String alertClusterId;
-	private static String healthCheckCmdbUrl;
-	private static String healthCheckCmdbId;
+	private Properties alertProps;
+	private String alertUrl;
+	private String alertClusterId;
+	private String healthCheckCmdbUrl;
+	private String healthCheckCmdbId;
+	private HashMap<String, String> httpAlertParams = new HashMap<String, String>();
+	private HashMap<String, String> httpHealthParams = new HashMap<String, String>();
+
 	private static StartMonitor monitor;
-
-	private static HashMap<String, String> httpAlertParams = new HashMap<String, String>();
-	private static HashMap<String, String> httpHealthParams = new HashMap<String, String>();
-
+	
 	/**
 	 * Main monitor method
 	 * 
@@ -83,8 +83,8 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	 * @return
 	 */
 	static public void main(String[] args) throws Exception {
-		monitor = new StartMonitor();
 		boolean opened = true;
+		monitor = new StartMonitor();
 
 		monitor.initialize();
 
