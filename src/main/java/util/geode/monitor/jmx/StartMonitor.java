@@ -88,12 +88,12 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 
 		monitor.initialize();
 
-		if (!loadAlertProperties()) {
+		if (!monitor.loadAlertProperties()) {
 			monitor.getApplicationLog().error("(main) Geode/GemFire Monitor failed to load alert.properties file");
 			return;
 		}
 
-		if (!loadHealthProperties()) {
+		if (!monitor.loadHealthProperties()) {
 			monitor.getApplicationLog().error("(main) Geode/GemFire Monitor failed to load health.properties file");
 			return;
 		}
@@ -201,7 +201,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	 * 
 	 * @return
 	 */
-	private static boolean loadHealthProperties() {
+	private boolean loadHealthProperties() {
 		boolean healthLoaded = true;
 		Properties healthProps = new Properties();
 		try {
@@ -247,7 +247,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	 * 
 	 * @return
 	 */
-	private static boolean loadAlertProperties() {
+	private boolean loadAlertProperties() {
 		boolean alertLoaded = false;
 		try {
 			InputStream input = StartMonitor.class.getClassLoader().getResourceAsStream(ALERT_PROPS);
@@ -288,11 +288,11 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	/**
 	 * sendAlert
 	 * 
-	 * Send alert to endpoint 
+	 * Send alert to endpoint
 	 * 
 	 * @param logMessage
 	 * 
-	 * @return 
+	 * @return
 	 */
 	@Override
 	public void sendAlert(LogMessage logMessage) {
