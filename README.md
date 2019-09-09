@@ -174,7 +174,7 @@ The health properties are used to configure health check.
 |Property Name|Description|
 |-------------|-----------|
 |health-check-cmdb-url|The HTTP/S URL or file used to retrieve CMDB details for a cluster|
-||To use a file as input use the format of usefile:location/name|
+||To use a file as input use the format of ***usefile:location/name***|
 |health-check-cmdb-url-parms|The HTTP/S header parameters|
 |health-check-cmdb-id|The id of the cluster used by CMDB service to retrieve CMDB details for the cluster|
 
