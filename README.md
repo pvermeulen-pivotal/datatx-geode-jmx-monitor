@@ -141,7 +141,7 @@ The following monitor types are available for mapping a user alert.
 
 ***The order of the json object are based on the order of the properties*** 
 
-Properties
+**Properties**
 
 |JSON User Field|Monitor Type|
 |---------------|------------|
