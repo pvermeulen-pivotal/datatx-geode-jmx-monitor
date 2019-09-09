@@ -110,6 +110,8 @@ The monitor properties are used to define the monitor configuration and behavior
 |reconnect-retry-attempts|The number of retry attempts before the monitor will try to use the next locator JMX manager defined in the managers property|
 |log-file-size|The maximum size of a monitor log file|
 |log-file-backups|The number of log backups to maintain before rolling off the oldest log file|
+|threshold-alert-count|The number of a threshold metric value exceeded before generating an alert|
+|threshold-alert-ttl|The time in minutes before purging threshold metric alert if the threshold-alert-count is not exceeded|
 |health-check-enabled|A boolean flag used to enable or disable the health check feature of the monitor|
 |health-check-interval|The interval on how often the health check is performed|
 
@@ -122,6 +124,49 @@ The alert properties are used to define the properties for sending alerts.
 ||To use a file as output define the value as ***usefile:location/name***|
 |alert-url-parms|The HTTP/S request header parameters|
 |alert-cluster-id|The id of the cluster as defined in the HTTP/S alert database|
+
+### alert-mapping.properties ###
+The alert-mapping properties are used to map GemFire alert to user JSON message.
+
+The following monitor types are available for mapping a user alert.
+
+|Monitor Type|Description|
+|------------|-----------|
+|alertClusterId|Alert cluster id defined in the alert properties|
+|member|GemFire member that caused alert|
+|date|Date of the alert|
+|time|Time of the alert|
+|severity|GemFire severity|
+|message|Complete message|
+
+***The order of the json object are based on the order of the properties*** 
+
+Properties
+
+|JSON User Field|Monitor Type|
+|---------------|------------|
+|fqdn|alertClusterId|
+|severity|severity|
+|message|message|
+
+### severity-mapping.properties ###
+The severity-mapping properties are used to map GemFire log severity to user severity.
+
+|GemFire Log Severity Codes|
+|--------------------------|
+|SEVERE|
+|ERROR|
+|WARNING|
+|INFO|
+|CONFIG|
+
+Properties
+
+|GemFire Severity|Description|
+|----------------|-----------|
+|SEVERE|The user code for a GemFire severe error|
+|ERROR|The user code for a GemFire error|
+|WARNING|The user code for a GemFire warning|
 
 ### health.properties ###
 The health properties are used to configure health check.
