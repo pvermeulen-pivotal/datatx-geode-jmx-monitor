@@ -160,7 +160,7 @@ The severity-mapping properties are used to map GemFire log severity to user sev
 |INFO|
 |CONFIG|
 
-Properties
+**Properties**
 
 |GemFire Severity|User Severity|
 |----------------|-------------|
