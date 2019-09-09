@@ -110,8 +110,8 @@ The monitor properties are used to define the monitor configuration and behavior
 |reconnect-retry-attempts|The number of retry attempts before the monitor will try to use the next locator JMX manager defined in the managers property|
 |log-file-size|The maximum size of a monitor log file|
 |log-file-backups|The number of log backups to maintain before rolling off the oldest log file|
-|threshold-alert-count|The number of a threshold metric value exceeded before generating an alert|
-|threshold-alert-ttl|The time in minutes before purging threshold metric alert if the threshold-alert-count is not exceeded|
+|threshold-alert-count|The number of a times a threshold metric value is exceeded before generating an alert|
+|threshold-alert-ttl|The time in minutes before purging a threshold metric alert if the threshold-alert-count has not been exceeded|
 |health-check-enabled|A boolean flag used to enable or disable the health check feature of the monitor|
 |health-check-interval|The interval on how often the health check is performed|
 
