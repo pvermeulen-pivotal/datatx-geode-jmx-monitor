@@ -162,11 +162,11 @@ The severity-mapping properties are used to map GemFire log severity to user sev
 
 Properties
 
-|GemFire Severity|Description|
-|----------------|-----------|
-|SEVERE|The user code for a GemFire severe error|
-|ERROR|The user code for a GemFire error|
-|WARNING|The user code for a GemFire warning|
+|GemFire Severity|User Severity|
+|----------------|-------------|
+|SEVERE|SEVERE|
+|ERROR|MAJOR|
+|WARNING|MINOR|
 
 ### health.properties ###
 The health properties are used to configure health check.
