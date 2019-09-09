@@ -14,7 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -57,6 +59,8 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	private static final String CMDB_HEALTH_JSON = "cmdb-health.json";
 	private static final String ALERT_PROPS = "alert.properties";
 	private static final String HEALTH_PROPS = "health.properties";
+	private static final String SEVERITY_MAPPING_PROPS = "severity-mapping.properties";
+	private static final String ALERT_MAPPING_PROPS = "alert-mapping.properties";
 	private static final String HEALTH_CHK_CMDB_URL = "health-check-cmdb-url";
 	private static final String HEALTH_CHK_CMDB_ID = "health-check-cmdb-id";
 	private static final String HEALTH_CHK_CMDB_URL_PARMS = "health-check-cmdb-url-parms";
@@ -74,6 +78,8 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	private String healthCheckCmdbId;
 	private HashMap<String, String> httpAlertParams = new HashMap<String, String>();
 	private HashMap<String, String> httpHealthParams = new HashMap<String, String>();
+	private HashMap<String, String> severityMapping = new HashMap<String, String>();
+	private List<String> alertMapping = new ArrayList<String>();
 
 	/**
 	 * Main monitor method
@@ -88,8 +94,20 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 
 		monitor.initialize();
 
-		if (!monitor.loadAlertProperties()) {
+		if (!monitor.loadAlertProperties(monitor.getApplicationLog())) {
 			monitor.getApplicationLog().error("(main) Geode/GemFire Monitor failed to load alert.properties file");
+			return;
+		}
+
+		if (!monitor.loadSeverityMappingProperties(monitor.getApplicationLog())) {
+			monitor.getApplicationLog()
+					.error("(main) Geode/GemFire Monitor failed to load severity-mapping.properties file");
+			return;
+		}
+
+		if (!monitor.loadAlertMappingProperties(monitor.getApplicationLog())) {
+			monitor.getApplicationLog()
+					.error("(main) Geode/GemFire Monitor failed to load alert-mapping.properties file");
 			return;
 		}
 
@@ -204,6 +222,54 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	}
 
 	/**
+	 * loadMappingProperties
+	 * 
+	 * Load the severity-mapping.properties file
+	 * 
+	 * @param log
+	 * @return
+	 * @throws Exception
+	 */
+	private boolean loadSeverityMappingProperties(Logger log) throws Exception {
+		Properties mappingProps = new Properties();
+		mappingProps.load(StartMonitor.class.getClassLoader().getResourceAsStream(SEVERITY_MAPPING_PROPS));
+		if (mappingProps.isEmpty()) {
+			log.error("(loadSeverityMappingProperties) No severity-mapping properties found or contains no values");
+			return false;
+		}
+
+		Set<Object> mappingKeys = mappingProps.keySet();
+		for (Object key : mappingKeys) {
+			severityMapping.put(((String) key).toUpperCase(), ((String) mappingProps.get(key)).toUpperCase());
+		}
+		return true;
+	}
+
+	/**
+	 * loadAlertMappingProperties
+	 * 
+	 * Load the alert-mapping.properties file
+	 * 
+	 * @param log
+	 * @return
+	 * @throws Exception
+	 */
+	private boolean loadAlertMappingProperties(Logger log) throws Exception {
+		Properties alertMappingProps = new Properties();
+		alertMappingProps.load(StartMonitor.class.getClassLoader().getResourceAsStream(ALERT_MAPPING_PROPS));
+		if (alertMappingProps.isEmpty()) {
+			log.error("(loadAlertMappingProperties) No alert-mapping properties found or contains no values");
+			return false;
+		}
+
+		Set<Object> mappingKeys = alertMappingProps.keySet();
+		for (Object key : mappingKeys) {
+			alertMapping.add((String) key + "=" + (String) alertMappingProps.get(key));
+		}
+		return true;
+	}
+
+	/**
 	 * loadHealthProperties
 	 * 
 	 * loads the health.properties file
@@ -215,6 +281,10 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 		boolean healthLoaded = true;
 		Properties healthProps = new Properties();
 		healthProps.load(StartMonitor.class.getClassLoader().getResourceAsStream(HEALTH_PROPS));
+		if (healthProps.isEmpty()) {
+			log.error("(loadHealthProperties) No health properties found or contains no values");
+			return false;
+		}
 		healthCheckCmdbUrl = (String) healthProps.get(HEALTH_CHK_CMDB_URL);
 		healthCheckCmdbId = (String) healthProps.get(HEALTH_CHK_CMDB_ID);
 		if (healthCheckCmdbUrl == null || healthCheckCmdbUrl.length() == 0) {
@@ -252,11 +322,14 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean loadAlertProperties() throws Exception {
+	private boolean loadAlertProperties(Logger log) throws Exception {
 		boolean alertLoaded = false;
-		InputStream input = StartMonitor.class.getClassLoader().getResourceAsStream(ALERT_PROPS);
 		alertProps = new Properties();
-		alertProps.load(input);
+		alertProps.load(StartMonitor.class.getClassLoader().getResourceAsStream(ALERT_PROPS));
+		if (alertProps.isEmpty()) {
+			log.error("(loadAlertProperties) No alert properties found or contains no values");
+			return false;
+		}
 		alertUrl = (String) alertProps.get(ALERT_URL);
 		if (alertUrl != null && alertUrl.length() > 0) {
 			alertLoaded = true;
@@ -281,6 +354,43 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	}
 
 	/**
+	 * getSeverityMapping
+	 * 
+	 * Get the mapping for the severity
+	 * 
+	 * @param severity
+	 * @return
+	 */
+	private String getSeverityMapping(String severity) {
+		return severityMapping.get(severity.toUpperCase());
+	}
+
+	private String convertEventToJson(Logger log, String severity, LogMessage logMessage) {
+		JSONObject jObj = new JSONObject();
+		for (String map : alertMapping) {
+			String[] fields = map.split("=");
+			if (fields != null && fields.length == 2) {
+				if (fields[1].toUpperCase().equals("ALERTCLUSTERID")) {
+					jObj.put(fields[0], alertClusterId);
+				} else if (fields[1].toUpperCase().equals("MEMBER")) {
+					jObj.put(fields[0], logMessage.getHeader().getMember());
+				} else if (fields[1].toUpperCase().equals("DATE")) {
+					jObj.put(fields[0], logMessage.getHeader().getDate());
+				} else if (fields[1].toUpperCase().equals("TIME")) {
+					jObj.put(fields[0], logMessage.getHeader().getTime());
+				} else if (fields[1].toUpperCase().equals("SEVERITY")) {
+					jObj.put(fields[0], severity);
+				} else if (fields[1].toUpperCase().equals("MESSAGE")) {
+					jObj.put(fields[0], logMessage.getHeader().toString() + " " + logMessage.getBody().toString());
+				}
+			} else {
+				log.error("(convertEventToJson) Error proccessing alertMapping, invalid value " + map);
+			}
+		}
+		return jObj.toString();
+	}
+
+	/**
 	 * sendAlert
 	 * 
 	 * Send alert to endpoint
@@ -293,21 +403,17 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 	public void sendAlert(LogMessage logMessage, Logger log) {
 		log.debug("(sendAlert) Sending Alert Message: url=" + alertUrl + " message=" + logMessage.toString());
 
-		String severity = logMessage.getHeader().getSeverity();
-		if (logMessage.getHeader().getSeverity().equals(Constants.WARNING)) {
-			severity = "MINOR";
-		}
+		String severity = getSeverityMapping(logMessage.getHeader().getSeverity());
 
-		String json = new JSONObject().put("fqdn", alertClusterId).put("severity", severity)
-				.put("message", logMessage.getHeader().toString() + " " + logMessage.getBody()).toString();
+		String json = convertEventToJson(log, severity, logMessage);
 
-		log.info("(sendAlert) Sending Alert Message json payload=" + json);
+		log.debug("(sendAlert) Sending Alert Message json payload=" + json);
 
-		if (alertUrl.toUpperCase().startsWith(USE_FILE)) {
+		if (alertUrl.toLowerCase().startsWith(USE_FILE)) {
 			try {
 				String fileName = alertUrl.substring(USE_FILE.length());
 				if (fileName != null && fileName.length() > 0) {
-					FileUtils.writeStringToFile(new File(alertUrl.substring(USE_FILE.length())), json,
+					FileUtils.writeStringToFile(new File(alertUrl.substring(USE_FILE.length())), json + "\n",
 							Charset.defaultCharset(), true);
 				} else {
 					log.error("(sendAlert) file method exception: no file defined in " + alertUrl);
@@ -398,7 +504,7 @@ public class StartMonitor extends MonitorImpl implements Monitor {
 
 		log.debug("(getCmdbHealth) Getting CMDB health");
 
-		if (healthCheckCmdbUrl.toUpperCase().startsWith(USE_FILE)) {
+		if (healthCheckCmdbUrl.toLowerCase().startsWith(USE_FILE)) {
 			try {
 				String fileName = healthCheckCmdbUrl.substring(USE_FILE.length());
 				if (fileName != null && fileName.length() > 0) {

@@ -5,3 +5,4 @@ logs/
 target/
 .DS_Store
 .factorypath
+event.log
