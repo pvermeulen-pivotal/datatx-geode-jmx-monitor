@@ -126,7 +126,7 @@ The alert properties are used to define the properties for sending alerts.
 |alert-cluster-id|The id of the cluster as defined in the HTTP/S alert database|
 
 ### alert-mapping.properties ###
-The alert-mapping properties are used to map GemFire alert to user JSON message.
+The alert-mapping properties are used to map a GemFire alert to user JSON message.
 
 The following monitor types are available for mapping a user alert.
 
