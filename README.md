@@ -114,6 +114,7 @@ The monitor properties are used to define the monitor configuration and behavior
 |threshold-alert-ttl|The time in minutes before purging a threshold metric alert if the threshold-alert-count has not been exceeded|
 |health-check-enabled|A boolean flag used to enable or disable the health check feature of the monitor|
 |health-check-interval|The interval on how often the health check is performed|
+|special-message-duration|Defines the time in minutes that a special message (JMX notifications) will deplay before sending the alert|
 
 ### alert.properties ###
 The alert properties are used to define the properties for sending alerts.

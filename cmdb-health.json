@@ -1,5 +1,5 @@
 {
-	"cluster": "Cluster-1",
+	"cluster": "GemFire_Cluster",
 	"site": "Site1",
 	"environment": "Production",
 	"locatorCount": 1,
